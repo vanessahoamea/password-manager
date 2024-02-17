@@ -27,8 +27,10 @@ class FirebaseAuthProvider extends AuthProvider {
     required String repeatPassword,
   }) async {
     try {
-      final isPasswordLongEnough = validatePasswordLength(password);
-      final isPasswordComplexEnough = validatePasswordComplexity(password);
+      final isPasswordLongEnough =
+          AuthProvider.validatePasswordLength(password);
+      final isPasswordComplexEnough =
+          AuthProvider.validatePasswordComplexity(password);
 
       if (email.isEmpty ||
           isPasswordLongEnough == null ||
@@ -53,7 +55,7 @@ class FirebaseAuthProvider extends AuthProvider {
       if (user != null) {
         return user;
       } else {
-        throw Exception();
+        throw AuthExceptionUserNotLoggedIn();
       }
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -64,7 +66,7 @@ class FirebaseAuthProvider extends AuthProvider {
         default:
           throw AuthExceptionGeneric();
       }
-    } catch (e) {
+    } catch (_) {
       throw AuthExceptionGeneric();
     }
   }
@@ -94,10 +96,8 @@ class FirebaseAuthProvider extends AuthProvider {
       switch (e.code) {
         case 'invalid-email':
           throw AuthExceptionInvalidEmail();
-        case 'user-not-found':
-          throw AuthExceptionUserNotFound();
-        case 'wrong-password':
-          throw AuthExceptionWrongPassword();
+        case 'invalid-credential':
+          throw AuthExceptionInvalidCredentials();
         default:
           throw AuthExceptionGeneric();
       }
@@ -122,7 +122,7 @@ class FirebaseAuthProvider extends AuthProvider {
     if (user != null) {
       await user.sendEmailVerification();
     } else {
-      throw Exception();
+      throw AuthExceptionUserNotLoggedIn();
     }
   }
 
@@ -135,26 +135,5 @@ class FirebaseAuthProvider extends AuthProvider {
     } catch (_) {
       throw Exception();
     }
-  }
-
-  @override
-  bool? validatePasswordLength(String password) {
-    if (password.isEmpty) {
-      return null;
-    }
-    return password.length >= 8;
-  }
-
-  @override
-  bool? validatePasswordComplexity(String password) {
-    if (password.isEmpty) {
-      return null;
-    }
-    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
-    bool hasNumbers = password.contains(RegExp(r'[0-9]'));
-    bool hasSpecialCharacters =
-        password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
-
-    return hasUppercase && hasNumbers && hasSpecialCharacters;
   }
 }

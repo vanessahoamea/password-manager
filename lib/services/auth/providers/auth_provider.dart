@@ -12,6 +12,23 @@ abstract class AuthProvider {
   Future<void> logOut();
   Future<void> sendEmailVerification();
   Future<void> sendPasswordResetEmail({required String email});
-  bool? validatePasswordLength(String password);
-  bool? validatePasswordComplexity(String password);
+
+  static bool? validatePasswordLength(String password) {
+    if (password.isEmpty) {
+      return null;
+    }
+    return password.length >= 8;
+  }
+
+  static bool? validatePasswordComplexity(String password) {
+    if (password.isEmpty) {
+      return null;
+    }
+    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    bool hasNumbers = password.contains(RegExp(r'[0-9]'));
+    bool hasSpecialCharacters =
+        password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
+    return hasUppercase && hasNumbers && hasSpecialCharacters;
+  }
 }

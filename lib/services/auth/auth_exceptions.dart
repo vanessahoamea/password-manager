@@ -13,9 +13,7 @@ class AuthExceptionWeakPassword implements Exception {}
 class AuthExceptionPasswordsDontMatch implements Exception {}
 
 // log in exceptions
-class AuthExceptionUserNotFound implements Exception {}
-
-class AuthExceptionWrongPassword implements Exception {}
+class AuthExceptionInvalidCredentials implements Exception {}
 
 class AuthExceptionUserNotLoggedIn implements Exception {}
 

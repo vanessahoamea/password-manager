@@ -17,6 +17,10 @@ class AuthEventGoToLogIn extends AuthEvent {
   const AuthEventGoToLogIn();
 }
 
+class AuthEventGoToVerifyEmail extends AuthEvent {
+  const AuthEventGoToVerifyEmail();
+}
+
 class AuthEventValidatePassword extends AuthEvent {
   final String password;
 

@@ -3,17 +3,19 @@ import 'package:password_manager/services/auth/app_user.dart';
 
 @immutable
 abstract class AuthState {
-  const AuthState();
+  final bool isLoading;
+
+  const AuthState({required this.isLoading});
 }
 
 class AuthStateUninitialized extends AuthState {
-  const AuthStateUninitialized();
+  const AuthStateUninitialized({required super.isLoading});
 }
 
 class AuthStateLoggedOut extends AuthState {
   final Exception? exception;
 
-  const AuthStateLoggedOut({required this.exception});
+  const AuthStateLoggedOut({required super.isLoading, required this.exception});
 }
 
 class AuthStateRegistering extends AuthState {
@@ -22,6 +24,7 @@ class AuthStateRegistering extends AuthState {
   final Exception? exception;
 
   const AuthStateRegistering({
+    required super.isLoading,
     required this.isPasswordLongEnough,
     required this.isPasswordComplexEnough,
     required this.exception,
@@ -31,9 +34,16 @@ class AuthStateRegistering extends AuthState {
 class AuthStateLoggedIn extends AuthState {
   final AppUser user;
 
-  const AuthStateLoggedIn({required this.user});
+  const AuthStateLoggedIn({required super.isLoading, required this.user});
 }
 
 class AuthStateVerifyEmail extends AuthState {
-  const AuthStateVerifyEmail();
+  final bool sentEmail;
+  final Exception? exception;
+
+  const AuthStateVerifyEmail({
+    required super.isLoading,
+    required this.sentEmail,
+    required this.exception,
+  });
 }
