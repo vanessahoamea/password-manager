@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:password_manager/bloc/auth/auth_bloc.dart';
+import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/components/primary_button.dart';
 import 'package:password_manager/components/secondary_button.dart';
 
 class VerifyEmailPage extends StatelessWidget {
   const VerifyEmailPage({super.key});
-
-  void resendVerificationEmail() {
-    //
-  }
-
-  void logout() {
-    //
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +47,20 @@ class VerifyEmailPage extends StatelessWidget {
                     Expanded(
                       child: PrimaryButton(
                         text: 'Resend e-mail',
-                        onTap: resendVerificationEmail,
+                        onTap: () {
+                          context
+                              .read<AuthBloc>()
+                              .add(const AuthEventSendEmailVerification());
+                        },
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: SecondaryButton(
                         text: 'Back to login',
-                        onTap: logout,
+                        onTap: () {
+                          context.read<AuthBloc>().add(const AuthEventLogOut());
+                        },
                       ),
                     ),
                   ],

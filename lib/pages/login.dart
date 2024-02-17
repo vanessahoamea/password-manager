@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:password_manager/bloc/auth/auth_bloc.dart';
+import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/components/primary_button.dart';
 import 'package:password_manager/components/primary_input_field.dart';
 import 'package:password_manager/utils/theme_extensions/global_colors.dart';
@@ -21,10 +24,6 @@ class _LoginPageState extends State<LoginPage> {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
-  }
-
-  void login() {
-    //
   }
 
   void toggleRememberUser(bool? value) {
@@ -109,7 +108,16 @@ class _LoginPageState extends State<LoginPage> {
             // button and registration link
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: PrimaryButton(text: 'Log in', onTap: login),
+              child: PrimaryButton(
+                text: 'Log in',
+                onTap: () {
+                  context.read<AuthBloc>().add(AuthEventLogIn(
+                        email: emailController.text,
+                        password: passwordController.text,
+                        rememberUser: rememberUser,
+                      ));
+                },
+              ),
             ),
             const SizedBox(height: 15),
             Row(
@@ -117,11 +125,16 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 const Text('Don\'t have an account?'),
                 const SizedBox(width: 5),
-                Text(
-                  'Register now',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
+                GestureDetector(
+                  onTap: () {
+                    context.read<AuthBloc>().add(const AuthEventGoToRegister());
+                  },
+                  child: Text(
+                    'Register now',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 )
               ],

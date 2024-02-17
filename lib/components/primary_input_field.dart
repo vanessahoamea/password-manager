@@ -5,12 +5,14 @@ class PrimaryInputField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final void Function(String)? onChanged;
 
   const PrimaryInputField({
     super.key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    this.onChanged,
   });
 
   @override
@@ -38,6 +40,7 @@ class _PrimaryInputFieldState extends State<PrimaryInputField> {
         Theme.of(context).extension<InputFieldColors>()!;
 
     return TextField(
+      controller: widget.controller,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: colors.borderColor),
@@ -65,6 +68,11 @@ class _PrimaryInputFieldState extends State<PrimaryInputField> {
             : null,
       ),
       obscureText: _isObscured,
+      onChanged: (value) {
+        if (widget.onChanged != null) {
+          widget.onChanged!(value);
+        }
+      },
     );
   }
 }

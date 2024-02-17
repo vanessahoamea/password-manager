@@ -2,7 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:password_manager/utils/theme_extensions/global_colors.dart';
 
 class PasswordRequirements extends StatelessWidget {
-  const PasswordRequirements({super.key});
+  final bool? isPasswordLongEnough;
+  final bool? isPasswordComplexEnough;
+
+  const PasswordRequirements({
+    super.key,
+    required this.isPasswordLongEnough,
+    required this.isPasswordComplexEnough,
+  });
+
+  Color getColor(bool? value, GlobalColors colors) {
+    if (value != null && value) {
+      return colors.successColor;
+    }
+
+    if (value != null && !value) {
+      return colors.errorColor;
+    }
+
+    return colors.secondaryTextColor;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +39,7 @@ class PasswordRequirements extends StatelessWidget {
                 child: Icon(
                   Icons.check,
                   size: 14,
-                  color: colors.secondaryTextColor,
+                  color: getColor(isPasswordLongEnough, colors),
                 ),
               ),
               const SizedBox(width: 5),
@@ -28,7 +47,7 @@ class PasswordRequirements extends StatelessWidget {
                 child: Text(
                   "Password must be at least 8 characters long",
                   style: TextStyle(
-                    color: colors.secondaryTextColor,
+                    color: getColor(isPasswordLongEnough, colors),
                   ),
                 ),
               ),
@@ -43,7 +62,7 @@ class PasswordRequirements extends StatelessWidget {
                 child: Icon(
                   Icons.check,
                   size: 14,
-                  color: colors.secondaryTextColor,
+                  color: getColor(isPasswordComplexEnough, colors),
                 ),
               ),
               const SizedBox(width: 5),
@@ -51,7 +70,7 @@ class PasswordRequirements extends StatelessWidget {
                 child: Text(
                   "Password must contain one uppercase letter, one number, and one special character",
                   style: TextStyle(
-                    color: colors.secondaryTextColor,
+                    color: getColor(isPasswordComplexEnough, colors),
                   ),
                 ),
               ),
