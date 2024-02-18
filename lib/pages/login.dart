@@ -20,8 +20,6 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  bool rememberUser = false;
-
   @override
   void dispose() {
     emailController.dispose();
@@ -29,17 +27,11 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void toggleRememberUser(bool? value) {
-    setState(() {
-      rememberUser = value ?? !rememberUser;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final GlobalColors colors = Theme.of(context).extension<GlobalColors>()!;
 
-    return BlocListener<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthStateLoggedOut) {
           switch (state.exception.runtimeType) {
@@ -67,115 +59,134 @@ class _LoginPageState extends State<LoginPage> {
           }
         }
       },
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // icon and text
-              const Icon(Icons.lock, size: 80),
-              const SizedBox(height: 2.5),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25.0),
-                child: Text(
-                  'Log in to manage your passwords',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                  textAlign: TextAlign.center,
+      builder: (context, state) {
+        return Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // icon and text
+                const Icon(Icons.lock, size: 80),
+                const SizedBox(height: 2.5),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Text(
+                    'Log in to manage your passwords',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 30),
+                const SizedBox(height: 30),
 
-              // input fields
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: PrimaryInputField(
-                  controller: emailController,
-                  hintText: 'E-mail address',
-                  obscureText: false,
+                // input fields
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: PrimaryInputField(
+                    controller: emailController,
+                    hintText: 'E-mail address',
+                    obscureText: false,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: PrimaryInputField(
-                  controller: passwordController,
-                  hintText: 'Master password',
-                  obscureText: true,
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: PrimaryInputField(
+                    controller: passwordController,
+                    hintText: 'Master password',
+                    obscureText: true,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
-              // remember email option and password reset link
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 25.0,
-                          height: 25.0,
-                          child: Checkbox(
-                            value: rememberUser,
-                            onChanged: toggleRememberUser,
+                // remember email option and password reset link
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 25.0,
+                            height: 25.0,
+                            child: Checkbox(
+                              value: state is AuthStateLoggedOut
+                                  ? state.rememberUser
+                                  : false,
+                              onChanged: (value) {
+                                context
+                                    .read<AuthBloc>()
+                                    .add(AuthEventUpdateRememberUser(
+                                      value: value ?? false,
+                                    ));
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          const Text('Remember me'),
+                        ],
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          context
+                              .read<AuthBloc>()
+                              .add(const AuthEventGoToForgotPassword());
+                        },
+                        child: Text(
+                          'Forgot password?',
+                          style: TextStyle(
+                            color: colors.secondaryTextColor,
                           ),
                         ),
-                        const SizedBox(width: 5),
-                        const Text('Remember me'),
-                      ],
-                    ),
-                    Text(
-                      'Forgot password?',
-                      style: TextStyle(
-                        color: colors.secondaryTextColor,
                       ),
-                    ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30),
+
+                // button and registration link
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: PrimaryButton(
+                    text: 'Log in',
+                    onTap: () {
+                      context.read<AuthBloc>().add(AuthEventLogIn(
+                            email: emailController.text,
+                            password: passwordController.text,
+                            rememberUser: state is AuthStateLoggedOut
+                                ? state.rememberUser
+                                : false,
+                          ));
+                    },
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Don\'t have an account?'),
+                    const SizedBox(width: 5),
+                    GestureDetector(
+                      onTap: () {
+                        context
+                            .read<AuthBloc>()
+                            .add(const AuthEventGoToRegister());
+                      },
+                      child: Text(
+                        'Register now',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
                   ],
                 ),
-              ),
-              const SizedBox(height: 30),
-
-              // button and registration link
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: PrimaryButton(
-                  text: 'Log in',
-                  onTap: () {
-                    context.read<AuthBloc>().add(AuthEventLogIn(
-                          email: emailController.text,
-                          password: passwordController.text,
-                          rememberUser: rememberUser,
-                        ));
-                  },
-                ),
-              ),
-              const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Don\'t have an account?'),
-                  const SizedBox(width: 5),
-                  GestureDetector(
-                    onTap: () {
-                      context
-                          .read<AuthBloc>()
-                          .add(const AuthEventGoToRegister());
-                    },
-                    child: Text(
-                      'Register now',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

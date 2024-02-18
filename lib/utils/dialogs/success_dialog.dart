@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Future<void> showSuccessialog(BuildContext context, String message) {
+Future<void> showSuccessDialog(BuildContext context, String message) {
   return showDialog<void>(
     context: context,
     barrierDismissible: false,

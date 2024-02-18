@@ -17,7 +17,7 @@ class VerifyEmailPage extends StatelessWidget {
       listener: (context, state) {
         if (state is AuthStateVerifyEmail) {
           if (state.sentEmail) {
-            showSuccessialog(
+            showSuccessDialog(
               context,
               'We have sent you the confirmation e-mail. Please check your inbox (including the spam folder).',
             );

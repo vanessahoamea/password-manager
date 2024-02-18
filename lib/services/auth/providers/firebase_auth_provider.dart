@@ -128,12 +128,21 @@ class FirebaseAuthProvider extends AuthProvider {
 
   @override
   Future<void> sendPasswordResetEmail({required String email}) async {
+    if (email.isEmpty) {
+      throw AuthExceptionEmptyFields();
+    }
+
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (_) {
-      throw Exception();
-    } catch (_) {
-      throw Exception();
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'invalid-email':
+          throw AuthExceptionInvalidEmail();
+        default:
+          throw AuthExceptionGeneric();
+      }
+    } catch (e) {
+      throw AuthExceptionGeneric();
     }
   }
 }

@@ -45,7 +45,7 @@ class PasswordRequirements extends StatelessWidget {
               const SizedBox(width: 5),
               Flexible(
                 child: Text(
-                  "Password must be at least 8 characters long",
+                  'Password must be at least 8 characters long',
                   style: TextStyle(
                     color: getColor(isPasswordLongEnough, colors),
                   ),
@@ -68,7 +68,7 @@ class PasswordRequirements extends StatelessWidget {
               const SizedBox(width: 5),
               Flexible(
                 child: Text(
-                  "Password must contain one uppercase letter, one number, and one special character",
+                  'Password must contain one uppercase letter, one number, and one special character',
                   style: TextStyle(
                     color: getColor(isPasswordComplexEnough, colors),
                   ),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/bloc/auth/auth_state.dart';
+import 'package:password_manager/pages/forgot_password.dart';
 import 'package:password_manager/pages/login.dart';
 import 'package:password_manager/pages/register.dart';
 import 'package:password_manager/pages/verify_email.dart';
@@ -41,6 +42,8 @@ class _HomePageState extends State<HomePage> {
             return const LoginPage();
           case AuthStateRegistering:
             return const RegisterPage();
+          case AuthStateForgotPassword:
+            return const ForgotPasswordPage();
           default:
             return const VerifyEmailPage();
         }

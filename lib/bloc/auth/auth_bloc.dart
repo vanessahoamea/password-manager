@@ -8,7 +8,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       : super(const AuthStateUninitialized(isLoading: false)) {
     on<AuthEventInitialize>((event, emit) async {
       await authProvider.initialize();
-      emit(const AuthStateLoggedOut(isLoading: false, exception: null));
+      emit(const AuthStateLoggedOut(
+        isLoading: false,
+        rememberUser: false,
+        exception: null,
+      ));
     });
 
     on<AuthEventGoToRegister>((event, emit) {
@@ -21,7 +25,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthEventGoToLogIn>((event, emit) {
-      emit(const AuthStateLoggedOut(isLoading: false, exception: null));
+      emit(const AuthStateLoggedOut(
+        isLoading: false,
+        rememberUser: false,
+        exception: null,
+      ));
+    });
+
+    on<AuthEventGoToForgotPassword>((event, emit) {
+      emit(const AuthStateForgotPassword(
+        isLoading: false,
+        sentEmail: false,
+        exception: null,
+      ));
     });
 
     on<AuthEventGoToVerifyEmail>((event, emit) {
@@ -57,15 +73,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           exception: null,
         ));
       } on Exception catch (e) {
-        emit(AuthStateRegistering(
-          isLoading: false,
-          isPasswordLongEnough:
-              AuthProvider.validatePasswordLength(event.password),
-          isPasswordComplexEnough:
-              AuthProvider.validatePasswordComplexity(event.password),
-          exception: e,
-        ));
+        emit((state as AuthStateRegistering).copyWith(exception: e));
       }
+    });
+
+    on<AuthEventUpdateRememberUser>((event, emit) {
+      emit(AuthStateLoggedOut(
+        isLoading: false,
+        rememberUser: event.value,
+        exception: null,
+      ));
     });
 
     on<AuthEventLogIn>((event, emit) async {
@@ -85,12 +102,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthStateLoggedIn(isLoading: false, user: user));
         }
       } on Exception catch (e) {
-        emit(AuthStateLoggedOut(isLoading: false, exception: e));
+        emit((state as AuthStateLoggedOut).copyWith(exception: e));
       }
     });
 
-    on<AuthEventResetPassword>((event, emit) {
-      //
+    on<AuthEventResetPassword>((event, emit) async {
+      try {
+        await authProvider.sendPasswordResetEmail(email: event.email);
+        emit(const AuthStateForgotPassword(
+          isLoading: false,
+          sentEmail: true,
+          exception: null,
+        ));
+      } on Exception catch (e) {
+        emit(AuthStateForgotPassword(
+          isLoading: false,
+          sentEmail: false,
+          exception: e,
+        ));
+      }
     });
 
     on<AuthEventSendEmailVerification>((event, emit) async {
@@ -113,9 +143,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventLogOut>((event, emit) async {
       try {
         await authProvider.logOut();
-        emit(const AuthStateLoggedOut(isLoading: false, exception: null));
+        emit(const AuthStateLoggedOut(
+          isLoading: false,
+          rememberUser: false,
+          exception: null,
+        ));
       } on Exception catch (e) {
-        emit(AuthStateLoggedOut(isLoading: false, exception: e));
+        // logging out failed in the verify email page
+        if (state is AuthStateVerifyEmail) {
+          emit((state as AuthStateVerifyEmail).copyWith(exception: e));
+        }
+        // logging out failed inside the pp
+        else {
+          //
+        }
       }
     });
   }

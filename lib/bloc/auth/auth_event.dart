@@ -17,6 +17,10 @@ class AuthEventGoToLogIn extends AuthEvent {
   const AuthEventGoToLogIn();
 }
 
+class AuthEventGoToForgotPassword extends AuthEvent {
+  const AuthEventGoToForgotPassword();
+}
+
 class AuthEventGoToVerifyEmail extends AuthEvent {
   const AuthEventGoToVerifyEmail();
 }
@@ -37,6 +41,12 @@ class AuthEventRegister extends AuthEvent {
     required this.password,
     required this.repeatPassword,
   });
+}
+
+class AuthEventUpdateRememberUser extends AuthEvent {
+  final bool value;
+
+  const AuthEventUpdateRememberUser({required this.value});
 }
 
 class AuthEventLogIn extends AuthEvent {
