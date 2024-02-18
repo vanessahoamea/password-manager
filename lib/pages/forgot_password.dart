@@ -79,7 +79,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 25.0),
                 child: Text(
-                  'Enter your e-mail address below and we will send you a message containing a link that allows you to reset your master password.',
+                  'Enter your e-mail address in the field below and we will send you a link that allows you to reset your master password.',
                   textAlign: TextAlign.center,
                 ),
               ),

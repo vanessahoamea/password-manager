@@ -67,7 +67,7 @@ class FirebaseAuthProvider extends AuthProvider {
           throw AuthExceptionGeneric();
       }
     } catch (_) {
-      throw AuthExceptionGeneric();
+      rethrow;
     }
   }
 
@@ -102,7 +102,7 @@ class FirebaseAuthProvider extends AuthProvider {
           throw AuthExceptionGeneric();
       }
     } catch (_) {
-      throw AuthExceptionGeneric();
+      rethrow;
     }
   }
 
@@ -128,11 +128,11 @@ class FirebaseAuthProvider extends AuthProvider {
 
   @override
   Future<void> sendPasswordResetEmail({required String email}) async {
-    if (email.isEmpty) {
-      throw AuthExceptionEmptyFields();
-    }
-
     try {
+      if (email.isEmpty) {
+        throw AuthExceptionEmptyFields();
+      }
+
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -141,8 +141,8 @@ class FirebaseAuthProvider extends AuthProvider {
         default:
           throw AuthExceptionGeneric();
       }
-    } catch (e) {
-      throw AuthExceptionGeneric();
+    } catch (_) {
+      rethrow;
     }
   }
 }

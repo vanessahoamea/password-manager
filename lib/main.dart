@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/bloc/auth/auth_state.dart';
+import 'package:password_manager/overlays/loading_screen.dart';
 import 'package:password_manager/pages/forgot_password.dart';
 import 'package:password_manager/pages/login.dart';
 import 'package:password_manager/pages/register.dart';
@@ -35,7 +36,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventInitialize());
 
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.isLoading) {
+          LoadingScreen.show(
+            context: context,
+            text: state.loadingMessage,
+          );
+        } else {
+          LoadingScreen.hide();
+        }
+      },
       builder: (context, state) {
         switch (state.runtimeType) {
           case AuthStateLoggedOut:
@@ -44,8 +55,17 @@ class _HomePageState extends State<HomePage> {
             return const RegisterPage();
           case AuthStateForgotPassword:
             return const ForgotPasswordPage();
-          default:
+          case AuthStateVerifyEmail:
             return const VerifyEmailPage();
+          default:
+            return const Scaffold(
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(child: CircularProgressIndicator()),
+                ],
+              ),
+            );
         }
       },
     );

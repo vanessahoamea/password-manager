@@ -4,8 +4,12 @@ import 'package:password_manager/services/auth/app_user.dart';
 @immutable
 abstract class AuthState {
   final bool isLoading;
+  final String loadingMessage;
 
-  const AuthState({required this.isLoading});
+  const AuthState({
+    required this.isLoading,
+    this.loadingMessage = 'Loading...',
+  });
 }
 
 class AuthStateUninitialized extends AuthState {
@@ -18,19 +22,22 @@ class AuthStateLoggedOut extends AuthState {
 
   const AuthStateLoggedOut({
     required super.isLoading,
+    super.loadingMessage,
     required this.rememberUser,
     required this.exception,
   });
 
   AuthStateLoggedOut copyWith({
     bool? isLoading,
+    String? loadingMessage,
     bool? rememberUser,
     Exception? exception,
   }) {
     return AuthStateLoggedOut(
       isLoading: isLoading ?? this.isLoading,
+      loadingMessage: loadingMessage ?? this.loadingMessage,
       rememberUser: rememberUser ?? this.rememberUser,
-      exception: exception ?? this.exception,
+      exception: exception,
     );
   }
 }
@@ -42,6 +49,7 @@ class AuthStateRegistering extends AuthState {
 
   const AuthStateRegistering({
     required super.isLoading,
+    super.loadingMessage,
     required this.isPasswordLongEnough,
     required this.isPasswordComplexEnough,
     required this.exception,
@@ -49,16 +57,18 @@ class AuthStateRegistering extends AuthState {
 
   AuthStateRegistering copyWith({
     bool? isLoading,
+    String? loadingMessage,
     bool? isPasswordLongEnough,
     bool? isPasswordComplexEnough,
     Exception? exception,
   }) {
     return AuthStateRegistering(
       isLoading: isLoading ?? this.isLoading,
+      loadingMessage: loadingMessage ?? this.loadingMessage,
       isPasswordLongEnough: isPasswordLongEnough ?? this.isPasswordLongEnough,
       isPasswordComplexEnough:
           isPasswordComplexEnough ?? this.isPasswordComplexEnough,
-      exception: exception ?? this.exception,
+      exception: exception,
     );
   }
 }
@@ -75,6 +85,7 @@ class AuthStateForgotPassword extends AuthState {
 
   const AuthStateForgotPassword({
     required super.isLoading,
+    super.loadingMessage,
     required this.sentEmail,
     required this.exception,
   });
@@ -86,17 +97,20 @@ class AuthStateVerifyEmail extends AuthState {
 
   const AuthStateVerifyEmail({
     required super.isLoading,
+    super.loadingMessage,
     required this.sentEmail,
     required this.exception,
   });
 
   AuthStateVerifyEmail copyWith({
     bool? isLoading,
+    String? loadingMessage,
     bool? sentEmail,
     Exception? exception,
   }) {
     return AuthStateVerifyEmail(
       isLoading: isLoading ?? this.isLoading,
+      loadingMessage: loadingMessage ?? this.loadingMessage,
       sentEmail: sentEmail ?? this.sentEmail,
       exception: exception ?? this.exception,
     );

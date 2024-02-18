@@ -60,6 +60,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthEventRegister>((event, emit) async {
+      emit((state as AuthStateRegistering).copyWith(
+        isLoading: true,
+        loadingMessage: 'Creating your account...',
+        exception: null,
+      ));
+
       try {
         await authProvider.register(
           email: event.email,
@@ -67,13 +73,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           repeatPassword: event.repeatPassword,
         );
         await authProvider.sendEmailVerification();
+
+        emit((state as AuthStateRegistering).copyWith(isLoading: false));
         emit(const AuthStateVerifyEmail(
           isLoading: false,
           sentEmail: false,
           exception: null,
         ));
       } on Exception catch (e) {
-        emit((state as AuthStateRegistering).copyWith(exception: e));
+        emit((state as AuthStateRegistering).copyWith(
+          isLoading: false,
+          exception: e,
+        ));
       }
     });
 
@@ -86,11 +97,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthEventLogIn>((event, emit) async {
+      emit((state as AuthStateLoggedOut).copyWith(
+        isLoading: true,
+        loadingMessage: 'Logging you in...',
+        exception: null,
+      ));
+
       try {
         final user = await authProvider.logIn(
           email: event.email,
           password: event.password,
         );
+
+        emit((state as AuthStateLoggedOut).copyWith(isLoading: false));
 
         if (!user.isEmailVerified) {
           emit(const AuthStateVerifyEmail(
@@ -102,11 +121,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthStateLoggedIn(isLoading: false, user: user));
         }
       } on Exception catch (e) {
-        emit((state as AuthStateLoggedOut).copyWith(exception: e));
+        emit((state as AuthStateLoggedOut).copyWith(
+          isLoading: false,
+          exception: e,
+        ));
       }
     });
 
     on<AuthEventResetPassword>((event, emit) async {
+      emit(const AuthStateForgotPassword(
+        isLoading: true,
+        loadingMessage: 'Sending e-mail...',
+        sentEmail: false,
+        exception: null,
+      ));
+
       try {
         await authProvider.sendPasswordResetEmail(email: event.email);
         emit(const AuthStateForgotPassword(
@@ -124,6 +153,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthEventSendEmailVerification>((event, emit) async {
+      emit(const AuthStateVerifyEmail(
+        isLoading: true,
+        loadingMessage: 'Sending e-mail...',
+        sentEmail: false,
+        exception: null,
+      ));
+
       try {
         await authProvider.sendEmailVerification();
         emit(const AuthStateVerifyEmail(
