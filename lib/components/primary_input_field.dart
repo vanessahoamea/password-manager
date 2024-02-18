@@ -5,6 +5,7 @@ class PrimaryInputField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final String? initialValue;
   final void Function(String)? onChanged;
 
   const PrimaryInputField({
@@ -12,6 +13,7 @@ class PrimaryInputField extends StatefulWidget {
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    this.initialValue,
     this.onChanged,
   });
 
@@ -26,6 +28,7 @@ class _PrimaryInputFieldState extends State<PrimaryInputField> {
   void initState() {
     super.initState();
     _isObscured = widget.obscureText;
+    widget.controller.text = widget.initialValue ?? '';
   }
 
   void toggleVisibility() {

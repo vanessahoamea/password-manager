@@ -85,6 +85,10 @@ class _LoginPageState extends State<LoginPage> {
                     controller: emailController,
                     hintText: 'E-mail address',
                     obscureText: false,
+                    initialValue:
+                        state is AuthStateLoggedOut && state.cachedEmail != null
+                            ? state.cachedEmail
+                            : '',
                   ),
                 ),
                 const SizedBox(height: 10),

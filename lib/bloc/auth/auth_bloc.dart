@@ -1,16 +1,24 @@
 import 'package:bloc/bloc.dart';
 import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/bloc/auth/auth_state.dart';
+import 'package:password_manager/services/auth/auth_service.dart';
 import 'package:password_manager/services/auth/providers/auth_provider.dart';
+import 'package:password_manager/services/local_storage/local_storage_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc(AuthProvider authProvider)
+  AuthBloc(AuthService authService, LocalStorageService localStorageService)
       : super(const AuthStateUninitialized(isLoading: false)) {
     on<AuthEventInitialize>((event, emit) async {
-      await authProvider.initialize();
-      emit(const AuthStateLoggedOut(
+      await authService.initialize();
+
+      final rememberUser = await localStorageService.getRememberUser();
+      final credentials =
+          rememberUser ? await localStorageService.getCredentials() : null;
+
+      emit(AuthStateLoggedOut(
         isLoading: false,
-        rememberUser: false,
+        rememberUser: rememberUser,
+        cachedEmail: credentials?['email'],
         exception: null,
       ));
     });
@@ -67,12 +75,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
 
       try {
-        await authProvider.register(
+        await authService.register(
           email: event.email,
           password: event.password,
           repeatPassword: event.repeatPassword,
         );
-        await authProvider.sendEmailVerification();
+        await authService.sendEmailVerification();
 
         emit((state as AuthStateRegistering).copyWith(isLoading: false));
         emit(const AuthStateVerifyEmail(
@@ -89,11 +97,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthEventUpdateRememberUser>((event, emit) {
-      emit(AuthStateLoggedOut(
-        isLoading: false,
-        rememberUser: event.value,
-        exception: null,
-      ));
+      emit((state as AuthStateLoggedOut).copyWith(rememberUser: event.value));
     });
 
     on<AuthEventLogIn>((event, emit) async {
@@ -104,10 +108,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
 
       try {
-        final user = await authProvider.logIn(
+        final user = await authService.logIn(
           email: event.email,
           password: event.password,
         );
+
+        if (event.rememberUser) {
+          await localStorageService.rememberUser(
+            email: event.email,
+            password: event.password,
+          );
+        } else {
+          await localStorageService.forgetUser();
+        }
 
         emit((state as AuthStateLoggedOut).copyWith(isLoading: false));
 
@@ -137,7 +150,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
 
       try {
-        await authProvider.sendPasswordResetEmail(email: event.email);
+        await authService.sendPasswordResetEmail(email: event.email);
         emit(const AuthStateForgotPassword(
           isLoading: false,
           sentEmail: true,
@@ -161,7 +174,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
 
       try {
-        await authProvider.sendEmailVerification();
+        await authService.sendEmailVerification();
         emit(const AuthStateVerifyEmail(
           isLoading: false,
           sentEmail: true,
@@ -178,7 +191,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<AuthEventLogOut>((event, emit) async {
       try {
-        await authProvider.logOut();
+        await authService.logOut();
         emit(const AuthStateLoggedOut(
           isLoading: false,
           rememberUser: false,
@@ -189,7 +202,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (state is AuthStateVerifyEmail) {
           emit((state as AuthStateVerifyEmail).copyWith(exception: e));
         }
-        // logging out failed inside the pp
+        // logging out failed inside the app
         else {
           //
         }

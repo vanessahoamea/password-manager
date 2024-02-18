@@ -18,12 +18,14 @@ class AuthStateUninitialized extends AuthState {
 
 class AuthStateLoggedOut extends AuthState {
   final bool rememberUser;
+  final String? cachedEmail;
   final Exception? exception;
 
   const AuthStateLoggedOut({
     required super.isLoading,
     super.loadingMessage,
     required this.rememberUser,
+    this.cachedEmail,
     required this.exception,
   });
 
@@ -31,12 +33,14 @@ class AuthStateLoggedOut extends AuthState {
     bool? isLoading,
     String? loadingMessage,
     bool? rememberUser,
+    String? cachedEmail,
     Exception? exception,
   }) {
     return AuthStateLoggedOut(
       isLoading: isLoading ?? this.isLoading,
       loadingMessage: loadingMessage ?? this.loadingMessage,
       rememberUser: rememberUser ?? this.rememberUser,
+      cachedEmail: cachedEmail ?? this.cachedEmail,
       exception: exception,
     );
   }

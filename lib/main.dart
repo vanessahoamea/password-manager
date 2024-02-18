@@ -8,7 +8,8 @@ import 'package:password_manager/pages/forgot_password.dart';
 import 'package:password_manager/pages/login.dart';
 import 'package:password_manager/pages/register.dart';
 import 'package:password_manager/pages/verify_email.dart';
-import 'package:password_manager/services/auth/providers/firebase_auth_provider.dart';
+import 'package:password_manager/services/auth/auth_service.dart';
+import 'package:password_manager/services/local_storage/local_storage_service.dart';
 import 'package:password_manager/utils/themes.dart';
 
 void main() {
@@ -18,7 +19,10 @@ void main() {
     darkTheme: AppTheme.darkTheme,
     themeMode: ThemeMode.system,
     home: BlocProvider<AuthBloc>(
-      create: (context) => AuthBloc(FirebaseAuthProvider()),
+      create: (context) => AuthBloc(
+        AuthService.fromFirebase(),
+        const LocalStorageService(),
+      ),
       child: const HomePage(),
     ),
   ));
