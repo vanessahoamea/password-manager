@@ -77,10 +77,82 @@ class AuthStateRegistering extends AuthState {
   }
 }
 
-class AuthStateLoggedIn extends AuthState {
+class AuthStatePasswordsPage extends AuthState {
   final AppUser user;
+  final Exception? exception;
 
-  const AuthStateLoggedIn({required super.isLoading, required this.user});
+  const AuthStatePasswordsPage({
+    required super.isLoading,
+    super.loadingMessage,
+    required this.user,
+    required this.exception,
+  });
+
+  AuthStatePasswordsPage copyWith({
+    bool? isLoading,
+    String? loadingMessage,
+    AppUser? user,
+    Exception? exception,
+  }) {
+    return AuthStatePasswordsPage(
+      isLoading: isLoading ?? this.isLoading,
+      loadingMessage: loadingMessage ?? this.loadingMessage,
+      user: user ?? this.user,
+      exception: exception ?? this.exception,
+    );
+  }
+}
+
+class AuthStateGeneratorPage extends AuthState {
+  final AppUser user;
+  final Exception? exception;
+
+  const AuthStateGeneratorPage({
+    required super.isLoading,
+    super.loadingMessage,
+    required this.user,
+    required this.exception,
+  });
+
+  AuthStateGeneratorPage copyWith({
+    bool? isLoading,
+    String? loadingMessage,
+    AppUser? user,
+    Exception? exception,
+  }) {
+    return AuthStateGeneratorPage(
+      isLoading: isLoading ?? this.isLoading,
+      loadingMessage: loadingMessage ?? this.loadingMessage,
+      user: user ?? this.user,
+      exception: exception ?? this.exception,
+    );
+  }
+}
+
+class AuthStateSettingsPage extends AuthState {
+  final AppUser user;
+  final Exception? exception;
+
+  const AuthStateSettingsPage({
+    required super.isLoading,
+    super.loadingMessage,
+    required this.user,
+    required this.exception,
+  });
+
+  AuthStateSettingsPage copyWith({
+    bool? isLoading,
+    String? loadingMessage,
+    AppUser? user,
+    Exception? exception,
+  }) {
+    return AuthStateSettingsPage(
+      isLoading: isLoading ?? this.isLoading,
+      loadingMessage: loadingMessage ?? this.loadingMessage,
+      user: user ?? this.user,
+      exception: exception ?? this.exception,
+    );
+  }
 }
 
 class AuthStateForgotPassword extends AuthState {

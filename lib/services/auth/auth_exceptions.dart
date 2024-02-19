@@ -16,6 +16,3 @@ class AuthExceptionPasswordsDontMatch implements Exception {}
 class AuthExceptionInvalidCredentials implements Exception {}
 
 class AuthExceptionUserNotLoggedIn implements Exception {}
-
-// log out exceptions
-class AuthExceptionLogOut implements Exception {}

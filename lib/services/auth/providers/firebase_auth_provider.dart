@@ -112,7 +112,7 @@ class FirebaseAuthProvider extends AuthProvider {
     if (user != null) {
       await FirebaseAuth.instance.signOut();
     } else {
-      throw AuthExceptionLogOut();
+      throw AuthExceptionUserNotLoggedIn();
     }
   }
 

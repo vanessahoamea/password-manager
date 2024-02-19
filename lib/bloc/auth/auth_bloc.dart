@@ -56,6 +56,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
     });
 
+    on<AuthEventGoToPasswordsPage>((event, emit) {
+      final user = authService.user;
+      emit(AuthStatePasswordsPage(
+        isLoading: false,
+        user: user!,
+        exception: null,
+      ));
+    });
+
+    on<AuthEventGoToGeneratorPage>((event, emit) {
+      final user = authService.user;
+      emit(AuthStateGeneratorPage(
+        isLoading: false,
+        user: user!,
+        exception: null,
+      ));
+    });
+
+    on<AuthEventGoToSettingsPage>((event, emit) {
+      final user = authService.user;
+      emit(AuthStateSettingsPage(
+        isLoading: false,
+        user: user!,
+        exception: null,
+      ));
+    });
+
     on<AuthEventValidatePassword>((event, emit) {
       emit(AuthStateRegistering(
         isLoading: false,
@@ -131,7 +158,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             exception: null,
           ));
         } else {
-          emit(AuthStateLoggedIn(isLoading: false, user: user));
+          emit(AuthStatePasswordsPage(
+            isLoading: false,
+            user: user,
+            exception: null,
+          ));
         }
       } on Exception catch (e) {
         emit((state as AuthStateLoggedOut).copyWith(
@@ -190,8 +221,55 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthEventLogOut>((event, emit) async {
+      switch (state.runtimeType) {
+        case AuthStateVerifyEmail:
+          emit((state as AuthStateVerifyEmail).copyWith(
+            isLoading: true,
+            loadingMessage: 'Logging you out...',
+          ));
+          break;
+        case AuthStatePasswordsPage:
+          emit((state as AuthStatePasswordsPage).copyWith(
+            isLoading: true,
+            loadingMessage: 'Logging you out...',
+          ));
+          break;
+        case AuthStateGeneratorPage:
+          emit((state as AuthStateGeneratorPage).copyWith(
+            isLoading: true,
+            loadingMessage: 'Logging you out...',
+          ));
+          break;
+        case AuthStateSettingsPage:
+          emit((state as AuthStateSettingsPage).copyWith(
+            isLoading: true,
+            loadingMessage: 'Logging you out...',
+          ));
+          break;
+        default:
+          break;
+      }
+
       try {
         await authService.logOut();
+
+        switch (state.runtimeType) {
+          case AuthStateVerifyEmail:
+            emit((state as AuthStateVerifyEmail).copyWith(isLoading: false));
+            break;
+          case AuthStatePasswordsPage:
+            emit((state as AuthStatePasswordsPage).copyWith(isLoading: false));
+            break;
+          case AuthStateGeneratorPage:
+            emit((state as AuthStateGeneratorPage).copyWith(isLoading: false));
+            break;
+          case AuthStateSettingsPage:
+            emit((state as AuthStateSettingsPage).copyWith(isLoading: false));
+            break;
+          default:
+            break;
+        }
+
         emit(const AuthStateLoggedOut(
           isLoading: false,
           rememberUser: false,
@@ -200,11 +278,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on Exception catch (e) {
         // logging out failed in the verify email page
         if (state is AuthStateVerifyEmail) {
-          emit((state as AuthStateVerifyEmail).copyWith(exception: e));
+          emit((state as AuthStateVerifyEmail).copyWith(
+            isLoading: false,
+            exception: e,
+          ));
         }
         // logging out failed inside the app
         else {
-          //
+          if (state is AuthStatePasswordsPage) {
+            emit((state as AuthStatePasswordsPage).copyWith(
+              isLoading: false,
+              exception: e,
+            ));
+          } else if (state is AuthStateGeneratorPage) {
+            emit((state as AuthStateGeneratorPage).copyWith(
+              isLoading: false,
+              exception: e,
+            ));
+          } else if (state is AuthStateSettingsPage) {
+            emit((state as AuthStateSettingsPage).copyWith(
+              isLoading: false,
+              exception: e,
+            ));
+          }
         }
       }
     });

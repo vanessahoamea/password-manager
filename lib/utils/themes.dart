@@ -11,6 +11,14 @@ class AppTheme {
     brightness: Brightness.light,
     colorScheme: const ColorScheme.light(primary: primaryColor),
     scaffoldBackgroundColor: lightBackgroundColor,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: primaryColor,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
     checkboxTheme: const CheckboxThemeData(
       side: BorderSide(color: lightInputFieldTextColor, width: 2.0),
     ),
@@ -33,6 +41,14 @@ class AppTheme {
     brightness: Brightness.dark,
     colorScheme: const ColorScheme.dark(primary: primaryColor),
     scaffoldBackgroundColor: darkBackgroundColor,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: primaryColor,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
     checkboxTheme: CheckboxThemeData(
       side: const BorderSide(color: darkInputFieldTextColor, width: 2.0),
       checkColor: MaterialStateColor.resolveWith((_) => Colors.white),

@@ -5,8 +5,11 @@ import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/bloc/auth/auth_state.dart';
 import 'package:password_manager/overlays/loading_screen.dart';
 import 'package:password_manager/pages/forgot_password.dart';
+import 'package:password_manager/pages/generator.dart';
 import 'package:password_manager/pages/login.dart';
+import 'package:password_manager/pages/passwords.dart';
 import 'package:password_manager/pages/register.dart';
+import 'package:password_manager/pages/settings.dart';
 import 'package:password_manager/pages/verify_email.dart';
 import 'package:password_manager/services/auth/auth_service.dart';
 import 'package:password_manager/services/local_storage/local_storage_service.dart';
@@ -61,6 +64,12 @@ class _HomePageState extends State<HomePage> {
             return const ForgotPasswordPage();
           case AuthStateVerifyEmail:
             return const VerifyEmailPage();
+          case AuthStatePasswordsPage:
+            return const PasswordsPage();
+          case AuthStateGeneratorPage:
+            return const GeneratorPage();
+          case AuthStateSettingsPage:
+            return const SettingsPage();
           default:
             return const Scaffold(
               body: Column(
