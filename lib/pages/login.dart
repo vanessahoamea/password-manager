@@ -17,13 +17,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: PrimaryInputField(
-                    controller: emailController,
+                    controller: _emailController,
                     hintText: 'E-mail address',
                     obscureText: false,
                     initialValue:
@@ -95,9 +95,21 @@ class _LoginPageState extends State<LoginPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: PrimaryInputField(
-                    controller: passwordController,
+                    controller: _passwordController,
                     hintText: 'Master password',
                     obscureText: true,
+                    isObscured: state is AuthStateLoggedOut
+                        ? !state.showPassword
+                        : true,
+                    toggleVisibility: () {
+                      context
+                          .read<AuthBloc>()
+                          .add(AuthEventUpdateLoggedOutState(
+                            showPassword: state is AuthStateLoggedOut
+                                ? !state.showPassword
+                                : false,
+                          ));
+                    },
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -120,8 +132,8 @@ class _LoginPageState extends State<LoginPage> {
                               onChanged: (value) {
                                 context
                                     .read<AuthBloc>()
-                                    .add(AuthEventUpdateRememberUser(
-                                      value: value ?? false,
+                                    .add(AuthEventUpdateLoggedOutState(
+                                      rememberUser: value ?? false,
                                     ));
                               },
                             ),
@@ -155,8 +167,8 @@ class _LoginPageState extends State<LoginPage> {
                     text: 'Log in',
                     onTap: () {
                       context.read<AuthBloc>().add(AuthEventLogIn(
-                            email: emailController.text,
-                            password: passwordController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
                             rememberUser: state is AuthStateLoggedOut
                                 ? state.rememberUser
                                 : false,

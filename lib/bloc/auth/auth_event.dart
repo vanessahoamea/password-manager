@@ -37,6 +37,16 @@ class AuthEventGoToSettingsPage extends AuthEvent {
   const AuthEventGoToSettingsPage();
 }
 
+class AuthEventUpdateRegisteringState extends AuthEvent {
+  final bool? showPassword;
+  final bool? showRepeatPassword;
+
+  const AuthEventUpdateRegisteringState({
+    this.showPassword,
+    this.showRepeatPassword,
+  });
+}
+
 class AuthEventValidatePassword extends AuthEvent {
   final String password;
 
@@ -55,10 +65,11 @@ class AuthEventRegister extends AuthEvent {
   });
 }
 
-class AuthEventUpdateRememberUser extends AuthEvent {
-  final bool value;
+class AuthEventUpdateLoggedOutState extends AuthEvent {
+  final bool? rememberUser;
+  final bool? showPassword;
 
-  const AuthEventUpdateRememberUser({required this.value});
+  const AuthEventUpdateLoggedOutState({this.rememberUser, this.showPassword});
 }
 
 class AuthEventLogIn extends AuthEvent {

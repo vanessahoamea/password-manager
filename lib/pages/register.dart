@@ -17,15 +17,15 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -96,7 +96,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: PrimaryInputField(
-                      controller: emailController,
+                      controller: _emailController,
                       hintText: 'E-mail address',
                       obscureText: false,
                     ),
@@ -105,13 +105,25 @@ class _RegisterPageState extends State<RegisterPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: PrimaryInputField(
-                      controller: passwordController,
+                      controller: _passwordController,
                       hintText: 'Master password',
                       obscureText: true,
+                      isObscured: state is AuthStateRegistering
+                          ? !state.showPassword
+                          : true,
                       onChanged: (value) {
                         context
                             .read<AuthBloc>()
                             .add(AuthEventValidatePassword(password: value));
+                      },
+                      toggleVisibility: () {
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthEventUpdateRegisteringState(
+                              showPassword: state is AuthStateRegistering
+                                  ? !state.showPassword
+                                  : false,
+                            ));
                       },
                     ),
                   ),
@@ -119,9 +131,21 @@ class _RegisterPageState extends State<RegisterPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: PrimaryInputField(
-                      controller: confirmPasswordController,
+                      controller: _confirmPasswordController,
                       hintText: 'Repeat master password',
                       obscureText: true,
+                      isObscured: state is AuthStateRegistering
+                          ? !state.showRepeatPassword
+                          : true,
+                      toggleVisibility: () {
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthEventUpdateRegisteringState(
+                              showRepeatPassword: state is AuthStateRegistering
+                                  ? !state.showRepeatPassword
+                                  : false,
+                            ));
+                      },
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -152,9 +176,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       text: 'Register',
                       onTap: () {
                         context.read<AuthBloc>().add(AuthEventRegister(
-                              email: emailController.text,
-                              password: passwordController.text,
-                              repeatPassword: confirmPasswordController.text,
+                              email: _emailController.text,
+                              password: _passwordController.text,
+                              repeatPassword: _confirmPasswordController.text,
                             ));
                       },
                     ),

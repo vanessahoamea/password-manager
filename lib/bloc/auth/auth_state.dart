@@ -18,6 +18,7 @@ class AuthStateUninitialized extends AuthState {
 
 class AuthStateLoggedOut extends AuthState {
   final bool rememberUser;
+  final bool showPassword;
   final String? cachedEmail;
   final Exception? exception;
 
@@ -25,6 +26,7 @@ class AuthStateLoggedOut extends AuthState {
     required super.isLoading,
     super.loadingMessage,
     required this.rememberUser,
+    required this.showPassword,
     this.cachedEmail,
     required this.exception,
   });
@@ -33,6 +35,7 @@ class AuthStateLoggedOut extends AuthState {
     bool? isLoading,
     String? loadingMessage,
     bool? rememberUser,
+    bool? showPassword,
     String? cachedEmail,
     Exception? exception,
   }) {
@@ -40,6 +43,7 @@ class AuthStateLoggedOut extends AuthState {
       isLoading: isLoading ?? this.isLoading,
       loadingMessage: loadingMessage ?? this.loadingMessage,
       rememberUser: rememberUser ?? this.rememberUser,
+      showPassword: showPassword ?? this.showPassword,
       cachedEmail: cachedEmail ?? this.cachedEmail,
       exception: exception,
     );
@@ -47,6 +51,8 @@ class AuthStateLoggedOut extends AuthState {
 }
 
 class AuthStateRegistering extends AuthState {
+  final bool showPassword;
+  final bool showRepeatPassword;
   final bool? isPasswordLongEnough;
   final bool? isPasswordComplexEnough;
   final Exception? exception;
@@ -54,6 +60,8 @@ class AuthStateRegistering extends AuthState {
   const AuthStateRegistering({
     required super.isLoading,
     super.loadingMessage,
+    required this.showPassword,
+    required this.showRepeatPassword,
     required this.isPasswordLongEnough,
     required this.isPasswordComplexEnough,
     required this.exception,
@@ -62,6 +70,8 @@ class AuthStateRegistering extends AuthState {
   AuthStateRegistering copyWith({
     bool? isLoading,
     String? loadingMessage,
+    bool? showPassword,
+    bool? showRepeatPassword,
     bool? isPasswordLongEnough,
     bool? isPasswordComplexEnough,
     Exception? exception,
@@ -69,6 +79,8 @@ class AuthStateRegistering extends AuthState {
     return AuthStateRegistering(
       isLoading: isLoading ?? this.isLoading,
       loadingMessage: loadingMessage ?? this.loadingMessage,
+      showPassword: showPassword ?? this.showPassword,
+      showRepeatPassword: showRepeatPassword ?? this.showRepeatPassword,
       isPasswordLongEnough: isPasswordLongEnough ?? this.isPasswordLongEnough,
       isPasswordComplexEnough:
           isPasswordComplexEnough ?? this.isPasswordComplexEnough,

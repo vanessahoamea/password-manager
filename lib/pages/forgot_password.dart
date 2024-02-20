@@ -17,11 +17,11 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final emailController = TextEditingController();
+  final _emailController = TextEditingController();
 
   @override
   void dispose() {
-    emailController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -89,7 +89,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: PrimaryInputField(
-                  controller: emailController,
+                  controller: _emailController,
                   hintText: 'E-mail address',
                   obscureText: false,
                 ),
@@ -101,7 +101,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   text: 'Send password recovery link',
                   onTap: () {
                     context.read<AuthBloc>().add(
-                        AuthEventResetPassword(email: emailController.text));
+                        AuthEventResetPassword(email: _emailController.text));
                   },
                 ),
               ),

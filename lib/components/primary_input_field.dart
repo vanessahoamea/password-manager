@@ -5,16 +5,20 @@ class PrimaryInputField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final bool? isObscured;
   final String? initialValue;
   final void Function(String)? onChanged;
+  final void Function()? toggleVisibility;
 
   const PrimaryInputField({
     super.key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    this.isObscured,
     this.initialValue,
     this.onChanged,
+    this.toggleVisibility,
   });
 
   @override
@@ -22,19 +26,10 @@ class PrimaryInputField extends StatefulWidget {
 }
 
 class _PrimaryInputFieldState extends State<PrimaryInputField> {
-  late bool _isObscured;
-
   @override
   void initState() {
-    super.initState();
-    _isObscured = widget.obscureText;
     widget.controller.text = widget.initialValue ?? '';
-  }
-
-  void toggleVisibility() {
-    setState(() {
-      _isObscured = !_isObscured;
-    });
+    super.initState();
   }
 
   @override
@@ -60,17 +55,17 @@ class _PrimaryInputFieldState extends State<PrimaryInputField> {
         fillColor: colors.backgroundColor,
         hintText: widget.hintText,
         hintStyle: TextStyle(color: colors.textColor),
-        suffixIcon: widget.obscureText
+        suffixIcon: widget.obscureText && widget.isObscured != null
             ? IconButton(
-                onPressed: toggleVisibility,
+                onPressed: widget.toggleVisibility,
                 icon: Icon(
-                  _isObscured ? Icons.visibility : Icons.visibility_off,
+                  widget.isObscured! ? Icons.visibility : Icons.visibility_off,
                   color: colors.textColor,
                 ),
               )
             : null,
       ),
-      obscureText: _isObscured,
+      obscureText: widget.isObscured ?? false,
       onChanged: (value) {
         if (widget.onChanged != null) {
           widget.onChanged!(value);
