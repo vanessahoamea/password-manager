@@ -11,7 +11,7 @@ class AuthService {
 
   Future<void> initialize() async => authProvider.initialize();
 
-  AppUser? get user => authProvider.user;
+  AppUser get user => authProvider.user;
 
   Future<AppUser> register({
     required String email,

@@ -7,6 +7,9 @@ import 'package:password_manager/services/auth/providers/auth_provider.dart';
 import 'package:password_manager/services/local_storage/local_storage_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  late bool rememberUser;
+  late Map<String, String> credentials;
+
   AuthBloc(AuthService authService, LocalStorageService localStorageService)
       : super(const AuthStateUninitialized(isLoading: false)) {
     on<AuthEventInitialize>((event, emit) async {
@@ -17,12 +20,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         localStorageService.getRememberUser(),
         localStorageService.getCredentials()
       ]);
+      this.rememberUser = rememberUser;
+      this.credentials = credentials;
 
       emit(AuthStateLoggedOut(
         isLoading: false,
-        rememberUser: rememberUser,
+        rememberUser: this.rememberUser,
         showPassword: false,
-        cachedEmail: credentials['email'],
+        cachedEmail: this.credentials['email'],
         exception: null,
       ));
     });
@@ -38,10 +43,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
     });
 
-    on<AuthEventGoToLogIn>((event, emit) {
-      emit(const AuthStateLoggedOut(
+    on<AuthEventGoToLogIn>((event, emit) async {
+      emit(AuthStateLoggedOut(
         isLoading: false,
-        rememberUser: false,
+        rememberUser: rememberUser,
+        cachedEmail: credentials['email'],
         showPassword: false,
         exception: null,
       ));
@@ -64,30 +70,60 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthEventGoToPasswordsPage>((event, emit) {
-      final user = authService.user;
-      emit(AuthStatePasswordsPage(
-        isLoading: false,
-        user: user!,
-        exception: null,
-      ));
+      try {
+        final user = authService.user;
+        emit(AuthStatePasswordsPage(
+          isLoading: false,
+          user: user,
+          exception: null,
+        ));
+      } on Exception catch (e) {
+        emit(AuthStateLoggedOut(
+          isLoading: false,
+          rememberUser: rememberUser,
+          cachedEmail: credentials['email'],
+          showPassword: false,
+          exception: e,
+        ));
+      }
     });
 
     on<AuthEventGoToGeneratorPage>((event, emit) {
-      final user = authService.user;
-      emit(AuthStateGeneratorPage(
-        isLoading: false,
-        user: user!,
-        exception: null,
-      ));
+      try {
+        final user = authService.user;
+        emit(AuthStateGeneratorPage(
+          isLoading: false,
+          user: user,
+          exception: null,
+        ));
+      } on Exception catch (e) {
+        emit(AuthStateLoggedOut(
+          isLoading: false,
+          rememberUser: rememberUser,
+          cachedEmail: credentials['email'],
+          showPassword: false,
+          exception: e,
+        ));
+      }
     });
 
     on<AuthEventGoToSettingsPage>((event, emit) {
-      final user = authService.user;
-      emit(AuthStateSettingsPage(
-        isLoading: false,
-        user: user!,
-        exception: null,
-      ));
+      try {
+        final user = authService.user;
+        emit(AuthStateSettingsPage(
+          isLoading: false,
+          user: user,
+          exception: null,
+        ));
+      } on Exception catch (e) {
+        emit(AuthStateLoggedOut(
+          isLoading: false,
+          rememberUser: rememberUser,
+          cachedEmail: credentials['email'],
+          showPassword: false,
+          exception: e,
+        ));
+      }
     });
 
     on<AuthEventUpdateRegisteringState>((event, emit) {
@@ -161,6 +197,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 )
               : localStorageService.forgetUser()
         ]);
+
+        rememberUser = event.rememberUser;
+        credentials['email'] = event.rememberUser ? event.email : '';
+        credentials['password'] = event.rememberUser ? event.password : '';
 
         emit((state as AuthStateLoggedOut).copyWith(isLoading: false));
 
@@ -283,12 +323,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             break;
         }
 
-        final [rememberUser as bool, credentials as Map<String, String>] =
-            await Future.wait([
-          localStorageService.getRememberUser(),
-          localStorageService.getCredentials()
-        ]);
-
         emit(AuthStateLoggedOut(
           isLoading: false,
           rememberUser: rememberUser,
@@ -297,32 +331,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           exception: null,
         ));
       } on Exception catch (e) {
-        // logging out failed in the verify email page
-        if (state is AuthStateVerifyEmail) {
-          emit((state as AuthStateVerifyEmail).copyWith(
-            isLoading: false,
-            exception: e,
-          ));
-        }
-        // logging out failed inside the app
-        else {
-          if (state is AuthStatePasswordsPage) {
-            emit((state as AuthStatePasswordsPage).copyWith(
-              isLoading: false,
-              exception: e,
-            ));
-          } else if (state is AuthStateGeneratorPage) {
-            emit((state as AuthStateGeneratorPage).copyWith(
-              isLoading: false,
-              exception: e,
-            ));
-          } else if (state is AuthStateSettingsPage) {
-            emit((state as AuthStateSettingsPage).copyWith(
-              isLoading: false,
-              exception: e,
-            ));
-          }
-        }
+        emit(AuthStateLoggedOut(
+          isLoading: false,
+          rememberUser: rememberUser,
+          showPassword: false,
+          cachedEmail: credentials['email'],
+          exception: e,
+        ));
       }
     });
   }

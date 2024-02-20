@@ -15,9 +15,13 @@ class FirebaseAuthProvider extends AuthProvider {
   }
 
   @override
-  AppUser? get user {
+  AppUser get user {
     final user = FirebaseAuth.instance.currentUser;
-    return user != null ? AppUser.fromFirebase(user) : null;
+    if (user != null) {
+      return AppUser.fromFirebase(user);
+    } else {
+      throw AuthExceptionUserNotLoggedIn();
+    }
   }
 
   @override
@@ -51,12 +55,7 @@ class FirebaseAuthProvider extends AuthProvider {
         password: password,
       );
 
-      final user = this.user;
-      if (user != null) {
-        return user;
-      } else {
-        throw AuthExceptionUserNotLoggedIn();
-      }
+      return user;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':
@@ -86,12 +85,7 @@ class FirebaseAuthProvider extends AuthProvider {
         password: password,
       );
 
-      final user = this.user;
-      if (user != null) {
-        return user;
-      } else {
-        throw AuthExceptionUserNotLoggedIn();
-      }
+      return user;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':
@@ -108,11 +102,11 @@ class FirebaseAuthProvider extends AuthProvider {
 
   @override
   Future<void> logOut() async {
-    final user = this.user;
-    if (user != null) {
+    try {
+      user; // checking if it's not null
       await FirebaseAuth.instance.signOut();
-    } else {
-      throw AuthExceptionUserNotLoggedIn();
+    } catch (_) {
+      rethrow;
     }
   }
 
