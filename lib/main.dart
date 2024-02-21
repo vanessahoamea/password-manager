@@ -6,6 +6,7 @@ import 'package:password_manager/bloc/auth/auth_state.dart';
 import 'package:password_manager/bloc/manager/manager_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
+import 'package:password_manager/components/page_wrapper.dart';
 import 'package:password_manager/overlays/loading_screen.dart';
 import 'package:password_manager/pages/forgot_password.dart';
 import 'package:password_manager/pages/generator.dart';
@@ -78,23 +79,33 @@ class HomePage extends StatelessWidget {
                 //
               },
               builder: (context, managerState) {
+                final Widget body;
+
                 switch (managerState.runtimeType) {
                   case ManagerStatePasswordsPage:
-                    return const PasswordsPage();
+                    body = const PasswordsPage();
+                    break;
                   case ManagerStateGeneratorPage:
-                    return const GeneratorPage();
+                    body = const GeneratorPage();
+                    break;
                   case ManagerStateSettingsPage:
-                    return const SettingsPage();
+                    body = const SettingsPage();
+                    break;
                   default:
-                    return const Scaffold(
-                      body: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Center(child: CircularProgressIndicator()),
-                        ],
-                      ),
+                    body = const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(child: CircularProgressIndicator()),
+                      ],
                     );
+                    break;
                 }
+
+                return PageWrapper(
+                  title: managerState.title ?? '',
+                  body: body,
+                  navbarIndex: managerState.navbarIndex ?? 0,
+                );
               },
             );
           default:

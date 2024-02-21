@@ -18,6 +18,7 @@ class AppTheme {
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
+      actionsIconTheme: IconThemeData(color: Colors.white),
     ),
     checkboxTheme: const CheckboxThemeData(
       side: BorderSide(color: lightInputFieldTextColor, width: 2.0),

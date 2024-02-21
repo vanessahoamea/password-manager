@@ -13,7 +13,7 @@ class Navbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: Colors.grey,
       destinations: [
         NavigationDestination(
           icon: Icon(
@@ -37,7 +37,7 @@ class Navbar extends StatelessWidget {
           label: 'Settings',
         ),
       ],
-      indicatorColor: Theme.of(context).colorScheme.primary,
+      indicatorColor: Colors.grey.withAlpha(100),
       selectedIndex: selectedIndex,
       onDestinationSelected: (int index) {
         if (index == 0) {
