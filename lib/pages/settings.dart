@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/components/navbar.dart';
+import 'package:password_manager/utils/dialogs/confirmation_dialog.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -15,7 +16,15 @@ class SettingsPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              context.read<AuthBloc>().add(const AuthEventLogOut());
+              showConfirmationDialog(
+                context,
+                'Log out',
+                'Are you sure you want to log out of the application?',
+              ).then((value) {
+                if (value) {
+                  context.read<AuthBloc>().add(const AuthEventLogOut());
+                }
+              });
             },
             icon: const Icon(Icons.logout),
             tooltip: 'Log out',

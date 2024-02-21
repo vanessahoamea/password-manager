@@ -23,13 +23,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       this.rememberUser = rememberUser;
       this.credentials = credentials;
 
-      emit(AuthStateLoggedOut(
-        isLoading: false,
-        rememberUser: this.rememberUser,
-        showPassword: false,
-        cachedEmail: this.credentials['email'],
-        exception: null,
-      ));
+      try {
+        emit(AuthStateLoggedIn(isLoading: false, user: authService.user));
+      } catch (_) {
+        emit(AuthStateLoggedOut(
+          isLoading: false,
+          rememberUser: this.rememberUser,
+          showPassword: false,
+          cachedEmail: this.credentials['email'],
+          exception: null,
+        ));
+      }
     });
 
     on<AuthEventGoToRegister>((event, emit) {
@@ -67,63 +71,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         sentEmail: false,
         exception: null,
       ));
-    });
-
-    on<AuthEventGoToPasswordsPage>((event, emit) {
-      try {
-        final user = authService.user;
-        emit(AuthStatePasswordsPage(
-          isLoading: false,
-          user: user,
-          exception: null,
-        ));
-      } on Exception catch (e) {
-        emit(AuthStateLoggedOut(
-          isLoading: false,
-          rememberUser: rememberUser,
-          cachedEmail: credentials['email'],
-          showPassword: false,
-          exception: e,
-        ));
-      }
-    });
-
-    on<AuthEventGoToGeneratorPage>((event, emit) {
-      try {
-        final user = authService.user;
-        emit(AuthStateGeneratorPage(
-          isLoading: false,
-          user: user,
-          exception: null,
-        ));
-      } on Exception catch (e) {
-        emit(AuthStateLoggedOut(
-          isLoading: false,
-          rememberUser: rememberUser,
-          cachedEmail: credentials['email'],
-          showPassword: false,
-          exception: e,
-        ));
-      }
-    });
-
-    on<AuthEventGoToSettingsPage>((event, emit) {
-      try {
-        final user = authService.user;
-        emit(AuthStateSettingsPage(
-          isLoading: false,
-          user: user,
-          exception: null,
-        ));
-      } on Exception catch (e) {
-        emit(AuthStateLoggedOut(
-          isLoading: false,
-          rememberUser: rememberUser,
-          cachedEmail: credentials['email'],
-          showPassword: false,
-          exception: e,
-        ));
-      }
     });
 
     on<AuthEventUpdateRegisteringState>((event, emit) {
@@ -211,11 +158,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             exception: null,
           ));
         } else {
-          emit(AuthStatePasswordsPage(
-            isLoading: false,
-            user: user,
-            exception: null,
-          ));
+          emit(AuthStateLoggedIn(isLoading: false, user: user));
         }
       } on Exception catch (e) {
         emit((state as AuthStateLoggedOut).copyWith(
@@ -281,20 +224,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             loadingMessage: 'Logging you out...',
           ));
           break;
-        case AuthStatePasswordsPage:
-          emit((state as AuthStatePasswordsPage).copyWith(
-            isLoading: true,
-            loadingMessage: 'Logging you out...',
-          ));
-          break;
-        case AuthStateGeneratorPage:
-          emit((state as AuthStateGeneratorPage).copyWith(
-            isLoading: true,
-            loadingMessage: 'Logging you out...',
-          ));
-          break;
-        case AuthStateSettingsPage:
-          emit((state as AuthStateSettingsPage).copyWith(
+        case AuthStateLoggedIn:
+          emit((state as AuthStateLoggedIn).copyWith(
             isLoading: true,
             loadingMessage: 'Logging you out...',
           ));
@@ -310,14 +241,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           case AuthStateVerifyEmail:
             emit((state as AuthStateVerifyEmail).copyWith(isLoading: false));
             break;
-          case AuthStatePasswordsPage:
-            emit((state as AuthStatePasswordsPage).copyWith(isLoading: false));
-            break;
-          case AuthStateGeneratorPage:
-            emit((state as AuthStateGeneratorPage).copyWith(isLoading: false));
-            break;
-          case AuthStateSettingsPage:
-            emit((state as AuthStateSettingsPage).copyWith(isLoading: false));
+          case AuthStateLoggedIn:
+            emit((state as AuthStateLoggedIn).copyWith(isLoading: false));
             break;
           default:
             break;

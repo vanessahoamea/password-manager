@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:password_manager/bloc/auth/auth_bloc.dart';
-import 'package:password_manager/bloc/auth/auth_event.dart';
-import 'package:password_manager/bloc/auth/auth_state.dart';
+import 'package:password_manager/bloc/manager/manager_bloc.dart';
+import 'package:password_manager/bloc/manager/manager_event.dart';
+import 'package:password_manager/extensions/dark_mode.dart';
 
 class Navbar extends StatelessWidget {
   final int selectedIndex;
@@ -11,36 +11,46 @@ class Navbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        return NavigationBar(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.key),
-              label: 'Passwords',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.security),
-              label: 'Generator',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
-          indicatorColor: Theme.of(context).colorScheme.primary,
-          selectedIndex: selectedIndex,
-          onDestinationSelected: (int index) {
-            if (index == 0) {
-              context.read<AuthBloc>().add(const AuthEventGoToPasswordsPage());
-            } else if (index == 1) {
-              context.read<AuthBloc>().add(const AuthEventGoToGeneratorPage());
-            } else {
-              context.read<AuthBloc>().add(const AuthEventGoToSettingsPage());
-            }
-          },
-        );
+    return NavigationBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      surfaceTintColor: Colors.transparent,
+      destinations: [
+        NavigationDestination(
+          icon: Icon(
+            Icons.key,
+            color: context.isDarkMode ? Colors.white : Colors.black,
+          ),
+          label: 'Passwords',
+        ),
+        NavigationDestination(
+          icon: Icon(
+            Icons.security,
+            color: context.isDarkMode ? Colors.white : Colors.black,
+          ),
+          label: 'Generator',
+        ),
+        NavigationDestination(
+          icon: Icon(
+            Icons.settings,
+            color: context.isDarkMode ? Colors.white : Colors.black,
+          ),
+          label: 'Settings',
+        ),
+      ],
+      indicatorColor: Theme.of(context).colorScheme.primary,
+      selectedIndex: selectedIndex,
+      onDestinationSelected: (int index) {
+        if (index == 0) {
+          context
+              .read<ManagerBloc>()
+              .add(const ManagerEventGoToPasswordsPage());
+        } else if (index == 1) {
+          context
+              .read<ManagerBloc>()
+              .add(const ManagerEventGoToGeneratorPage());
+        } else {
+          context.read<ManagerBloc>().add(const ManagerEventGoToSettingsPage());
+        }
       },
     );
   }

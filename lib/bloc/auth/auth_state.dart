@@ -89,80 +89,25 @@ class AuthStateRegistering extends AuthState {
   }
 }
 
-class AuthStatePasswordsPage extends AuthState {
+class AuthStateLoggedIn extends AuthState {
   final AppUser user;
-  final Exception? exception;
 
-  const AuthStatePasswordsPage({
+  const AuthStateLoggedIn({
     required super.isLoading,
     super.loadingMessage,
     required this.user,
-    required this.exception,
   });
 
-  AuthStatePasswordsPage copyWith({
+  AuthStateLoggedIn copyWith({
     bool? isLoading,
     String? loadingMessage,
     AppUser? user,
     Exception? exception,
   }) {
-    return AuthStatePasswordsPage(
+    return AuthStateLoggedIn(
       isLoading: isLoading ?? this.isLoading,
       loadingMessage: loadingMessage ?? this.loadingMessage,
       user: user ?? this.user,
-      exception: exception ?? this.exception,
-    );
-  }
-}
-
-class AuthStateGeneratorPage extends AuthState {
-  final AppUser user;
-  final Exception? exception;
-
-  const AuthStateGeneratorPage({
-    required super.isLoading,
-    super.loadingMessage,
-    required this.user,
-    required this.exception,
-  });
-
-  AuthStateGeneratorPage copyWith({
-    bool? isLoading,
-    String? loadingMessage,
-    AppUser? user,
-    Exception? exception,
-  }) {
-    return AuthStateGeneratorPage(
-      isLoading: isLoading ?? this.isLoading,
-      loadingMessage: loadingMessage ?? this.loadingMessage,
-      user: user ?? this.user,
-      exception: exception ?? this.exception,
-    );
-  }
-}
-
-class AuthStateSettingsPage extends AuthState {
-  final AppUser user;
-  final Exception? exception;
-
-  const AuthStateSettingsPage({
-    required super.isLoading,
-    super.loadingMessage,
-    required this.user,
-    required this.exception,
-  });
-
-  AuthStateSettingsPage copyWith({
-    bool? isLoading,
-    String? loadingMessage,
-    AppUser? user,
-    Exception? exception,
-  }) {
-    return AuthStateSettingsPage(
-      isLoading: isLoading ?? this.isLoading,
-      loadingMessage: loadingMessage ?? this.loadingMessage,
-      user: user ?? this.user,
-      exception: exception ?? this.exception,
     );
   }
 }

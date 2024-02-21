@@ -25,18 +25,6 @@ class AuthEventGoToVerifyEmail extends AuthEvent {
   const AuthEventGoToVerifyEmail();
 }
 
-class AuthEventGoToPasswordsPage extends AuthEvent {
-  const AuthEventGoToPasswordsPage();
-}
-
-class AuthEventGoToGeneratorPage extends AuthEvent {
-  const AuthEventGoToGeneratorPage();
-}
-
-class AuthEventGoToSettingsPage extends AuthEvent {
-  const AuthEventGoToSettingsPage();
-}
-
 class AuthEventUpdateRegisteringState extends AuthEvent {
   final bool? showPassword;
   final bool? showRepeatPassword;

@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/bloc/auth/auth_state.dart';
+import 'package:password_manager/bloc/manager/manager_bloc.dart';
+import 'package:password_manager/bloc/manager/manager_event.dart';
+import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/overlays/loading_screen.dart';
 import 'package:password_manager/pages/forgot_password.dart';
 import 'package:password_manager/pages/generator.dart';
@@ -21,41 +24,43 @@ void main() {
     theme: AppTheme.lightTheme,
     darkTheme: AppTheme.darkTheme,
     themeMode: ThemeMode.system,
-    home: BlocProvider<AuthBloc>(
-      create: (context) => AuthBloc(
-        AuthService.fromFirebase(),
-        const LocalStorageService(),
-      ),
+    home: MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc(
+            AuthService.fromFirebase(),
+            const LocalStorageService(),
+          ),
+        ),
+        BlocProvider<ManagerBloc>(
+          create: (context) => ManagerBloc(),
+        ),
+      ],
       child: const HomePage(),
     ),
   ));
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventInitialize());
 
     return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state.isLoading) {
+      listener: (context, authState) {
+        if (authState.isLoading) {
           LoadingScreen.show(
             context: context,
-            text: state.loadingMessage,
+            text: authState.loadingMessage,
           );
         } else {
           LoadingScreen.hide();
         }
       },
-      builder: (context, state) {
-        switch (state.runtimeType) {
+      builder: (context, authState) {
+        switch (authState.runtimeType) {
           case AuthStateLoggedOut:
             return const LoginPage();
           case AuthStateRegistering:
@@ -64,12 +69,34 @@ class _HomePageState extends State<HomePage> {
             return const ForgotPasswordPage();
           case AuthStateVerifyEmail:
             return const VerifyEmailPage();
-          case AuthStatePasswordsPage:
-            return const PasswordsPage();
-          case AuthStateGeneratorPage:
-            return const GeneratorPage();
-          case AuthStateSettingsPage:
-            return const SettingsPage();
+          case AuthStateLoggedIn:
+            final user = (authState as AuthStateLoggedIn).user;
+            context.read<ManagerBloc>().add(ManagerEventInitialize(user: user));
+
+            return BlocConsumer<ManagerBloc, ManagerState>(
+              listener: (context, managerState) {
+                //
+              },
+              builder: (context, managerState) {
+                switch (managerState.runtimeType) {
+                  case ManagerStatePasswordsPage:
+                    return const PasswordsPage();
+                  case ManagerStateGeneratorPage:
+                    return const GeneratorPage();
+                  case ManagerStateSettingsPage:
+                    return const SettingsPage();
+                  default:
+                    return const Scaffold(
+                      body: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(child: CircularProgressIndicator()),
+                        ],
+                      ),
+                    );
+                }
+              },
+            );
           default:
             return const Scaffold(
               body: Column(
