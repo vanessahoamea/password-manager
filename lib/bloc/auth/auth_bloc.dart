@@ -3,7 +3,6 @@ import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/bloc/auth/auth_state.dart';
 import 'package:password_manager/services/auth/app_user.dart';
 import 'package:password_manager/services/auth/auth_service.dart';
-import 'package:password_manager/services/auth/providers/auth_provider.dart';
 import 'package:password_manager/services/local_storage/local_storage_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -83,9 +82,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventValidatePassword>((event, emit) {
       emit((state as AuthStateRegistering).copyWith(
         isPasswordLongEnough:
-            AuthProvider.validatePasswordLength(event.password),
+            AuthService.validatePasswordLength(event.password),
         isPasswordComplexEnough:
-            AuthProvider.validatePasswordComplexity(event.password),
+            AuthService.validatePasswordComplexity(event.password),
       ));
     });
 
@@ -103,7 +102,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             password: event.password,
             repeatPassword: event.repeatPassword,
           ),
-          authService.sendEmailVerification()
+          authService.sendEmailVerification(),
+          localStorageService.createEncryptionKey(
+            masterPassword: event.password,
+          )
         ]);
 
         emit((state as AuthStateRegistering).copyWith(isLoading: false));

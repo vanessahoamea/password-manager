@@ -30,7 +30,7 @@ void main() {
         BlocProvider<AuthBloc>(
           create: (context) => AuthBloc(
             AuthService.fromFirebase(),
-            const LocalStorageService(),
+            LocalStorageService(),
           ),
         ),
         BlocProvider<ManagerBloc>(

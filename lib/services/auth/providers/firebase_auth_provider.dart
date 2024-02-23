@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart'
 import 'package:firebase_core/firebase_core.dart';
 import 'package:password_manager/firebase_options.dart';
 import 'package:password_manager/services/auth/auth_exceptions.dart';
+import 'package:password_manager/services/auth/auth_service.dart';
 import 'package:password_manager/services/auth/providers/auth_provider.dart';
 import 'package:password_manager/services/auth/app_user.dart';
 
@@ -31,10 +32,9 @@ class FirebaseAuthProvider extends AuthProvider {
     required String repeatPassword,
   }) async {
     try {
-      final isPasswordLongEnough =
-          AuthProvider.validatePasswordLength(password);
+      final isPasswordLongEnough = AuthService.validatePasswordLength(password);
       final isPasswordComplexEnough =
-          AuthProvider.validatePasswordComplexity(password);
+          AuthService.validatePasswordComplexity(password);
 
       if (email.isEmpty ||
           isPasswordLongEnough == null ||
