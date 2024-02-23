@@ -8,6 +8,15 @@ import 'package:password_manager/services/auth/providers/auth_provider.dart';
 import 'package:password_manager/services/auth/app_user.dart';
 
 class FirebaseAuthProvider extends AuthProvider {
+  static final FirebaseAuthProvider _instance =
+      FirebaseAuthProvider._internal();
+
+  factory FirebaseAuthProvider() {
+    return _instance;
+  }
+
+  FirebaseAuthProvider._internal();
+
   @override
   Future<void> initialize() async {
     await Firebase.initializeApp(

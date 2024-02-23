@@ -17,6 +17,7 @@ import 'package:password_manager/pages/settings.dart';
 import 'package:password_manager/pages/verify_email.dart';
 import 'package:password_manager/services/auth/auth_service.dart';
 import 'package:password_manager/services/local_storage/local_storage_service.dart';
+import 'package:password_manager/services/passwords/password_service.dart';
 import 'package:password_manager/utils/themes.dart';
 
 void main() {
@@ -34,7 +35,7 @@ void main() {
           ),
         ),
         BlocProvider<ManagerBloc>(
-          create: (context) => ManagerBloc(),
+          create: (context) => ManagerBloc(PasswordService.fromFirestore()),
         ),
       ],
       child: const HomePage(),

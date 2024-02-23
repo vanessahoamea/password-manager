@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:password_manager/services/auth/app_user.dart';
+import 'package:password_manager/services/passwords/password.dart';
 
 @immutable
 abstract class ManagerState {
@@ -15,8 +16,12 @@ class ManagerStateUninitialized extends ManagerState {
 }
 
 class ManagerStatePasswordsPage extends ManagerState {
-  const ManagerStatePasswordsPage({required super.user})
-      : super(title: 'My Passwords', navbarIndex: 0);
+  final Stream<Iterable<Password>> passwords;
+
+  const ManagerStatePasswordsPage({
+    required super.user,
+    required this.passwords,
+  }) : super(title: 'My Passwords', navbarIndex: 0);
 }
 
 class ManagerStateGeneratorPage extends ManagerState {

@@ -14,7 +14,9 @@ class PasswordService {
   factory PasswordService.fromFirestore() =>
       PasswordService(FirestoreDatabaseProvider());
 
-  Iterable<Password> get allPasswords => dbProvider.allPasswords;
+  Stream<Iterable<Password>> allPasswords({required String userId}) {
+    return dbProvider.allPasswords(userId: userId);
+  }
 
   Future<void> createPassword({required Password password}) {
     return dbProvider.createPassword(password: password);
