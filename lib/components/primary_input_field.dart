@@ -45,9 +45,7 @@ class _PrimaryInputFieldState extends State<PrimaryInputField> {
           borderRadius: BorderRadius.circular(10.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
           borderRadius: BorderRadius.circular(10.0),
         ),
         contentPadding: const EdgeInsets.all(20.0),

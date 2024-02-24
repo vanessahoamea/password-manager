@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/components/navbar.dart';
+import 'package:password_manager/extensions/dark_mode.dart';
 import 'package:password_manager/utils/dialogs/confirmation_dialog.dart';
 
 class PageWrapper extends StatelessWidget {
@@ -48,6 +49,7 @@ class PageWrapper extends StatelessWidget {
         },
         shape: const CircleBorder(),
         tooltip: 'Add password',
+        elevation: context.isDarkMode ? 0 : 6,
         child: const Icon(
           Icons.add,
           color: Colors.white,

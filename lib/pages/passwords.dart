@@ -2,9 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
+import 'package:password_manager/components/passwords_list.dart';
+import 'package:password_manager/components/search_field.dart';
+import 'package:password_manager/services/passwords/password.dart';
 
-class PasswordsPage extends StatelessWidget {
+class PasswordsPage extends StatefulWidget {
   const PasswordsPage({super.key});
+
+  @override
+  State<PasswordsPage> createState() => _PasswordsPageState();
+}
+
+class _PasswordsPageState extends State<PasswordsPage> {
+  final _searchController = TextEditingController();
+
+  @override
+  dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +35,40 @@ class PasswordsPage extends StatelessWidget {
             switch (snapshot.connectionState) {
               case ConnectionState.active:
               case ConnectionState.done:
-                return const SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.all(25.0),
+                if (snapshot.hasData) {
+                  return Padding(
+                    padding: const EdgeInsets.all(15.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         // search bar
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 15.0),
+                          child: SearchField(
+                            controller: _searchController,
+                            onChanged: (value) {
+                              //
+                            },
+                          ),
+                        ),
 
                         // passwords list
+                        Expanded(
+                          child: PasswordsList(
+                            passwords: snapshot.data as Iterable<Password>,
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                );
+                  );
+                } else {
+                  return const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(child: CircularProgressIndicator()),
+                    ],
+                  );
+                }
               default:
                 return const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
