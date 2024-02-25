@@ -12,6 +12,8 @@ class PasswordsList extends StatelessWidget {
     final GlobalColors colors = Theme.of(context).extension<GlobalColors>()!;
 
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: passwords.length,
       itemExtent: 90.0,
       itemBuilder: (context, index) {
@@ -34,8 +36,10 @@ class PasswordsList extends StatelessWidget {
                     style: TextStyle(color: colors.secondaryTextColor),
                   )
                 : null,
-            trailing:
-                Icon(Icons.chevron_right, color: colors.secondaryTextColor),
+            trailing: Icon(
+              Icons.chevron_right,
+              color: colors.secondaryTextColor,
+            ),
           ),
         );
       },

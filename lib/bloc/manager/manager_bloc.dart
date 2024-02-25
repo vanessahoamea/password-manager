@@ -34,5 +34,21 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
     on<ManagerEventGoToSettingsPage>((event, emit) {
       emit(ManagerStateSettingsPage(user: user));
     });
+
+    on<ManagerEventFilterPasswords>((event, emit) {
+      if (event.term.isEmpty) {
+        emit((state as ManagerStatePasswordsPage).copyWith(
+          filteredPasswords: null,
+        ));
+      } else {
+        final filteredPasswords = passwordService.filterPasswords(
+          passwords: event.passwords,
+          term: event.term,
+        );
+        emit((state as ManagerStatePasswordsPage).copyWith(
+          filteredPasswords: filteredPasswords,
+        ));
+      }
+    });
   }
 }

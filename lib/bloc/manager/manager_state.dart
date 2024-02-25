@@ -17,11 +17,21 @@ class ManagerStateUninitialized extends ManagerState {
 
 class ManagerStatePasswordsPage extends ManagerState {
   final Stream<Iterable<Password>> passwords;
+  final Iterable<Password>? filteredPasswords;
 
   const ManagerStatePasswordsPage({
     required super.user,
     required this.passwords,
+    this.filteredPasswords,
   }) : super(title: 'My Passwords', navbarIndex: 0);
+
+  ManagerStatePasswordsPage copyWith({Iterable<Password>? filteredPasswords}) {
+    return ManagerStatePasswordsPage(
+      user: user,
+      passwords: passwords,
+      filteredPasswords: filteredPasswords,
+    );
+  }
 }
 
 class ManagerStateGeneratorPage extends ManagerState {

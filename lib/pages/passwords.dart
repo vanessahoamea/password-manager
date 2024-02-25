@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_bloc.dart';
+import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/components/passwords_list.dart';
 import 'package:password_manager/components/search_field.dart';
@@ -36,29 +37,37 @@ class _PasswordsPageState extends State<PasswordsPage> {
               case ConnectionState.active:
               case ConnectionState.done:
                 if (snapshot.hasData) {
-                  return Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        // search bar
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 15.0),
-                          child: SearchField(
-                            controller: _searchController,
-                            onChanged: (value) {
-                              //
-                            },
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          // search bar
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 15.0),
+                            child: SearchField(
+                              controller: _searchController,
+                              onChanged: (value) {
+                                context
+                                    .read<ManagerBloc>()
+                                    .add(ManagerEventFilterPasswords(
+                                      term: value,
+                                      passwords:
+                                          snapshot.data as Iterable<Password>,
+                                    ));
+                              },
+                            ),
                           ),
-                        ),
 
-                        // passwords list
-                        Expanded(
-                          child: PasswordsList(
-                            passwords: snapshot.data as Iterable<Password>,
+                          // passwords list
+                          PasswordsList(
+                            passwords: state.filteredPasswords ??
+                                snapshot.data as Iterable<Password>,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 } else {

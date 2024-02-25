@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:password_manager/services/auth/app_user.dart';
+import 'package:password_manager/services/passwords/password.dart';
 
 @immutable
 abstract class ManagerEvent {
@@ -22,4 +23,14 @@ class ManagerEventGoToGeneratorPage extends ManagerEvent {
 
 class ManagerEventGoToSettingsPage extends ManagerEvent {
   const ManagerEventGoToSettingsPage();
+}
+
+class ManagerEventFilterPasswords extends ManagerEvent {
+  final String term;
+  final Iterable<Password> passwords;
+
+  const ManagerEventFilterPasswords({
+    required this.term,
+    required this.passwords,
+  });
 }

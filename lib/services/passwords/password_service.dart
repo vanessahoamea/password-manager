@@ -34,6 +34,16 @@ class PasswordService {
     return dbProvider.deletePassword(passwordId: passwordId);
   }
 
+  Iterable<Password> filterPasswords({
+    required Iterable<Password> passwords,
+    required String term,
+  }) {
+    return passwords.where((password) =>
+        password.website.toLowerCase().contains(term.toLowerCase()) ||
+        (password.username != null &&
+            password.username!.toLowerCase().contains(term.toLowerCase())));
+  }
+
   static Future<List<dynamic>> generateKey({
     required String masterPassword,
     required List<int> salt,
