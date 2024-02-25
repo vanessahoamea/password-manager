@@ -6,6 +6,8 @@ import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/components/passwords_list.dart';
 import 'package:password_manager/components/search_field.dart';
 import 'package:password_manager/services/passwords/password.dart';
+import 'package:password_manager/services/passwords/password_exceptions.dart';
+import 'package:password_manager/utils/dialogs/error_dialog.dart';
 
 class PasswordsPage extends StatefulWidget {
   const PasswordsPage({super.key});
@@ -27,7 +29,14 @@ class _PasswordsPageState extends State<PasswordsPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<ManagerBloc, ManagerState>(
       listener: (context, state) {
-        //
+        if (state is ManagerStatePasswordsPage) {
+          if (state.exception is PasswordExceptionFailedToGetAll) {
+            showErrorDialog(
+              context,
+              'Failed to get passwords. Try again later.',
+            );
+          }
+        }
       },
       builder: (context, state) {
         return StreamBuilder(
