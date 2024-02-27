@@ -6,6 +6,7 @@ import 'package:password_manager/bloc/auth/auth_state.dart';
 import 'package:password_manager/bloc/manager/manager_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
+import 'package:password_manager/bloc/theme/theme_cubit.dart';
 import 'package:password_manager/components/page_wrapper.dart';
 import 'package:password_manager/overlays/loading_screen.dart';
 import 'package:password_manager/pages/forgot_password.dart';
@@ -21,26 +22,43 @@ import 'package:password_manager/services/passwords/password_service.dart';
 import 'package:password_manager/utils/themes.dart';
 
 void main() {
-  runApp(MaterialApp(
-    title: 'Password Manager',
-    theme: AppTheme.lightTheme,
-    darkTheme: AppTheme.darkTheme,
-    themeMode: ThemeMode.system,
-    home: MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(
-            AuthService.fromFirebase(),
-            LocalStorageService(),
-          ),
-        ),
-        BlocProvider<ManagerBloc>(
-          create: (context) => ManagerBloc(PasswordService.fromFirestore()),
-        ),
-      ],
-      child: const HomePage(),
-    ),
+  runApp(BlocProvider<ThemeCubit>(
+    create: (context) => ThemeCubit(LocalStorageService()),
+    child: const App(),
   ));
+}
+
+class App extends StatelessWidget {
+  const App({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        return MaterialApp(
+          title: 'Password Manager',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode,
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<AuthBloc>(
+                create: (context) => AuthBloc(
+                  AuthService.fromFirebase(),
+                  LocalStorageService(),
+                ),
+              ),
+              BlocProvider<ManagerBloc>(
+                create: (context) =>
+                    ManagerBloc(PasswordService.fromFirestore()),
+              ),
+            ],
+            child: const HomePage(),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class HomePage extends StatelessWidget {

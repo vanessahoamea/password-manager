@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:encrypt/encrypt.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:password_manager/services/passwords/password_service.dart';
 
@@ -73,5 +74,27 @@ class LocalStorageService {
       storage.write(key: 'iv', value: iv.base64),
       storage.write(key: 'encryption_key', value: jsonEncode(keyBytes)),
     ]);
+  }
+
+  Future<ThemeMode> getThemeMode() async {
+    String theme = await storage.read(key: 'theme') ?? 'system';
+    if (theme == 'light') {
+      return ThemeMode.light;
+    } else if (theme == 'dark') {
+      return ThemeMode.dark;
+    } else {
+      return ThemeMode.system;
+    }
+  }
+
+  Future<void> setThemeMode(ThemeMode themeMode) async {
+    String theme = 'system';
+    if (themeMode == ThemeMode.light) {
+      theme = 'light';
+    } else if (themeMode == ThemeMode.dark) {
+      theme = 'dark';
+    }
+
+    await storage.write(key: 'theme', value: theme);
   }
 }
