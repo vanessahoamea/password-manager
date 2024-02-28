@@ -1,0 +1,1 @@
+class BiometricsException implements Exception {}
