@@ -12,7 +12,9 @@ class BiometricsService {
 
   Future<List<BiometricType>> getAvailableBiometrics() async {
     final biometrics = await auth.getAvailableBiometrics();
-    return biometrics;
+    return biometrics
+        .where((biometric) => biometric != BiometricType.weak)
+        .toList();
   }
 
   void authenticate() async {
