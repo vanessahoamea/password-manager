@@ -17,6 +17,7 @@ import 'package:password_manager/pages/register.dart';
 import 'package:password_manager/pages/settings.dart';
 import 'package:password_manager/pages/verify_email.dart';
 import 'package:password_manager/services/auth/auth_service.dart';
+import 'package:password_manager/services/biometrics/biometrics_service.dart';
 import 'package:password_manager/services/local_storage/local_storage_service.dart';
 import 'package:password_manager/services/passwords/password_service.dart';
 import 'package:password_manager/utils/themes.dart';
@@ -49,8 +50,11 @@ class App extends StatelessWidget {
                 ),
               ),
               BlocProvider<ManagerBloc>(
-                create: (context) =>
-                    ManagerBloc(PasswordService.fromFirestore()),
+                create: (context) => ManagerBloc(
+                  PasswordService.fromFirestore(),
+                  LocalStorageService(),
+                  BiometricsService(),
+                ),
               ),
             ],
             child: const HomePage(),

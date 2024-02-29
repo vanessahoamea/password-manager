@@ -88,13 +88,18 @@ class LocalStorageService {
   }
 
   Future<void> setThemeMode(ThemeMode themeMode) async {
-    String theme = 'system';
-    if (themeMode == ThemeMode.light) {
-      theme = 'light';
-    } else if (themeMode == ThemeMode.dark) {
-      theme = 'dark';
-    }
+    await storage.write(key: 'theme', value: themeMode.name);
+  }
 
-    await storage.write(key: 'theme', value: theme);
+  Future<bool> getHasBiometricsEnabled() async {
+    String value = await storage.read(key: 'has_biometrics_enabled') ?? 'false';
+    return value == 'true';
+  }
+
+  Future<void> toggleBiometrics(bool hasBiometricsEnabled) async {
+    await storage.write(
+      key: 'has_biometrics_enabled',
+      value: hasBiometricsEnabled.toString(),
+    );
   }
 }

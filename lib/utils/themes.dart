@@ -54,6 +54,9 @@ class AppTheme {
       side: const BorderSide(color: darkInputFieldTextColor, width: 2.0),
       checkColor: MaterialStateColor.resolveWith((_) => Colors.white),
     ),
+    switchTheme: SwitchThemeData(
+      thumbColor: MaterialStateColor.resolveWith((_) => Colors.white),
+    ),
     extensions: const [
       GlobalColors(
         secondaryTextColor: darkSecondaryTextColor,

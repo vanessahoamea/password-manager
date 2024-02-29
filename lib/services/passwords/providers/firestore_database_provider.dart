@@ -21,7 +21,7 @@ class FirestoreDatabaseProvider extends DatabaseProvider {
           .where('userId', isEqualTo: userId)
           .snapshots()
           .map((event) => event.docs.map((doc) => Password.fromFirestore(doc)));
-    } catch (e) {
+    } catch (_) {
       throw PasswordExceptionFailedToGetAll();
     }
   }
@@ -58,7 +58,7 @@ class FirestoreDatabaseProvider extends DatabaseProvider {
   Future<void> deletePassword({required String passwordId}) async {
     try {
       await passwords.doc(passwordId).delete();
-    } catch (e) {
+    } catch (_) {
       throw PasswordExceptionFailedToDelete();
     }
   }

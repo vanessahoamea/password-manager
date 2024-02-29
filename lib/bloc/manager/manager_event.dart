@@ -34,3 +34,7 @@ class ManagerEventFilterPasswords extends ManagerEvent {
     required this.passwords,
   });
 }
+
+class ManagerEventToggleBiometrics extends ManagerEvent {
+  const ManagerEventToggleBiometrics();
+}

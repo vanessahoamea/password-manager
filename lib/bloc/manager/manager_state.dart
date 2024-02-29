@@ -34,10 +34,11 @@ class ManagerStatePasswordsPage extends ManagerState {
     Exception? exception,
   }) {
     return ManagerStatePasswordsPage(
-        user: user ?? this.user,
-        passwords: passwords ?? this.passwords,
-        filteredPasswords: filteredPasswords,
-        exception: exception);
+      user: user ?? this.user,
+      passwords: passwords ?? this.passwords,
+      filteredPasswords: filteredPasswords,
+      exception: exception,
+    );
   }
 }
 
@@ -47,6 +48,20 @@ class ManagerStateGeneratorPage extends ManagerState {
 }
 
 class ManagerStateSettingsPage extends ManagerState {
-  const ManagerStateSettingsPage({required super.user})
-      : super(title: 'Settings', navbarIndex: 2);
+  final bool hasBiometricsEnabled;
+
+  const ManagerStateSettingsPage({
+    required super.user,
+    required this.hasBiometricsEnabled,
+  }) : super(title: 'Settings', navbarIndex: 2);
+
+  ManagerStateSettingsPage copyWith({
+    AppUser? user,
+    bool? hasBiometricsEnabled,
+  }) {
+    return ManagerStateSettingsPage(
+      user: user ?? this.user,
+      hasBiometricsEnabled: hasBiometricsEnabled ?? this.hasBiometricsEnabled,
+    );
+  }
 }

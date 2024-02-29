@@ -11,38 +11,44 @@ class PasswordsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalColors colors = Theme.of(context).extension<GlobalColors>()!;
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: passwords.length,
-      itemExtent: 90.0,
-      itemBuilder: (context, index) {
-        return Container(
-          alignment: Alignment.center,
-          margin: const EdgeInsets.symmetric(vertical: 2.5),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.25),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ListTile(
-            leading: const Icon(Icons.public),
-            title: Text(
-              passwords.elementAt(index).website,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: passwords.elementAt(index).username != null
-                ? Text(
-                    passwords.elementAt(index).username!,
-                    style: TextStyle(color: colors.secondaryTextColor),
-                  )
-                : null,
-            trailing: Icon(
-              Icons.chevron_right,
-              color: colors.secondaryTextColor,
-            ),
-          ),
-        );
-      },
-    );
+    return passwords.isNotEmpty
+        ? ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: passwords.length,
+            itemExtent: 90.0,
+            itemBuilder: (context, index) {
+              return Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.symmetric(vertical: 2.5),
+                decoration: BoxDecoration(
+                  color:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.25),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ListTile(
+                  leading: const Icon(Icons.public),
+                  title: Text(
+                    passwords.elementAt(index).website,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: passwords.elementAt(index).username != null
+                      ? Text(
+                          passwords.elementAt(index).username!,
+                          style: TextStyle(color: colors.secondaryTextColor),
+                        )
+                      : null,
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: colors.secondaryTextColor,
+                  ),
+                ),
+              );
+            },
+          )
+        : Text(
+            'Nothing to see here.',
+            style: TextStyle(color: colors.secondaryTextColor),
+          );
   }
 }
