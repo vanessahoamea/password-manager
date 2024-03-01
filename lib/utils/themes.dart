@@ -17,6 +17,7 @@ class AppTheme {
       titleTextStyle: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
+        color: Colors.white,
       ),
       actionsIconTheme: IconThemeData(color: Colors.white),
     ),
@@ -48,6 +49,7 @@ class AppTheme {
       titleTextStyle: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
+        color: Colors.white,
       ),
     ),
     checkboxTheme: CheckboxThemeData(

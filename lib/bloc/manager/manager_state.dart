@@ -48,19 +48,23 @@ class ManagerStateGeneratorPage extends ManagerState {
 }
 
 class ManagerStateSettingsPage extends ManagerState {
+  final bool supportsBiometrics;
   final bool hasBiometricsEnabled;
 
   const ManagerStateSettingsPage({
     required super.user,
+    required this.supportsBiometrics,
     required this.hasBiometricsEnabled,
   }) : super(title: 'Settings', navbarIndex: 2);
 
   ManagerStateSettingsPage copyWith({
     AppUser? user,
+    bool? supportsBiometrics,
     bool? hasBiometricsEnabled,
   }) {
     return ManagerStateSettingsPage(
       user: user ?? this.user,
+      supportsBiometrics: supportsBiometrics ?? this.supportsBiometrics,
       hasBiometricsEnabled: hasBiometricsEnabled ?? this.hasBiometricsEnabled,
     );
   }

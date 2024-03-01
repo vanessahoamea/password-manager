@@ -10,6 +10,18 @@ class BiometricsService {
 
   BiometricsService._internal();
 
+  Future<bool> supportsBiometrics() async {
+    try {
+      final [canCheckBiometrics, isDeviceSupported] = await Future.wait([
+        auth.canCheckBiometrics,
+        auth.isDeviceSupported(),
+      ]);
+      return canCheckBiometrics || isDeviceSupported;
+    } on MissingPluginException catch (_) {
+      return false;
+    }
+  }
+
   Future<bool> hasBiometricsEnabled() async {
     final biometrics = await auth.getAvailableBiometrics();
     return biometrics

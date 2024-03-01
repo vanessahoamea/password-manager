@@ -7,6 +7,7 @@ import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/bloc/theme/theme_cubit.dart';
 import 'package:password_manager/components/theme_modal.dart';
+import 'package:password_manager/extensions/capitalize_string.dart';
 import 'package:password_manager/utils/dialogs/confirmation_dialog.dart';
 import 'package:password_manager/utils/theme_extensions/global_colors.dart';
 
@@ -26,16 +27,13 @@ class SettingsPage extends StatelessWidget {
               title: const Text('Theme Mode', style: TextStyle(fontSize: 18)),
               leading: const Icon(Icons.palette_outlined),
               subtitle: Text(
-                selectedTheme == ThemeMode.light
-                    ? 'Light'
-                    : selectedTheme == ThemeMode.dark
-                        ? 'Dark'
-                        : 'System',
+                selectedTheme.name.capitalize(),
                 style: TextStyle(color: colors.secondaryTextColor),
               ),
               onTap: () {
                 showModalBottomSheet<void>(
                   context: context,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   builder: (context) {
                     return ThemeModal(
                       onTap: (theme) {
@@ -54,32 +52,48 @@ class SettingsPage extends StatelessWidget {
           builder: (context, managerState) {
             if (managerState is ManagerStateSettingsPage) {
               final String userEmail = managerState.user!.email;
+              final bool supportsBiometrics = managerState.supportsBiometrics;
               final bool hasBiometricsEnabled =
                   managerState.hasBiometricsEnabled;
 
               return Column(
                 children: [
-                  // toggle biometrics auth
-                  ListTile(
-                    title: const Text(
-                      'Log In with Biometrics',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    leading: const Icon(Icons.person),
-                    subtitle: Text(
-                      'Use biometrics enabled on your device in addition to your master password to authenticate.',
-                      style: TextStyle(color: colors.secondaryTextColor),
-                    ),
-                    trailing: Switch(
-                      value: hasBiometricsEnabled,
-                      onChanged: (value) {
-                        context
-                            .read<ManagerBloc>()
-                            .add(const ManagerEventToggleBiometrics());
-                      },
-                    ),
+                  // toggle biometrics auth (if supported)
+                  Builder(
+                    builder: (BuildContext context) {
+                      if (supportsBiometrics) {
+                        return Column(
+                          children: [
+                            ListTile(
+                              title: const Text(
+                                'Log In with Biometrics',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              leading: const Icon(Icons.person),
+                              subtitle: Text(
+                                'Use biometrics enabled on your device in addition to your master password to authenticate.',
+                                style:
+                                    TextStyle(color: colors.secondaryTextColor),
+                              ),
+                              trailing: Switch(
+                                value: hasBiometricsEnabled,
+                                onChanged: (value) {
+                                  context.read<ManagerBloc>().add(
+                                      const ManagerEventToggleBiometrics());
+                                },
+                              ),
+                            ),
+                            Divider(
+                              height: 0,
+                              color: Colors.grey.withOpacity(0.5),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
                   ),
-                  Divider(height: 0, color: Colors.grey.withOpacity(0.5)),
 
                   // log out
                   ListTile(
