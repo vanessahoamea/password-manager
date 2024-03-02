@@ -17,10 +17,6 @@ class AuthEventGoToLogIn extends AuthEvent {
   const AuthEventGoToLogIn();
 }
 
-class AuthEventGoToForgotPassword extends AuthEvent {
-  const AuthEventGoToForgotPassword();
-}
-
 class AuthEventGoToVerifyEmail extends AuthEvent {
   const AuthEventGoToVerifyEmail();
 }
@@ -74,12 +70,6 @@ class AuthEventLogIn extends AuthEvent {
 
 class AuthEventAuthenticateWithBiometrics extends AuthEvent {
   const AuthEventAuthenticateWithBiometrics();
-}
-
-class AuthEventResetPassword extends AuthEvent {
-  final String email;
-
-  const AuthEventResetPassword({required this.email});
 }
 
 class AuthEventSendEmailVerification extends AuthEvent {

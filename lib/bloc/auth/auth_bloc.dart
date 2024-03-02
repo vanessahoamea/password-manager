@@ -68,14 +68,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
     });
 
-    on<AuthEventGoToForgotPassword>((event, emit) {
-      emit(const AuthStateForgotPassword(
-        isLoading: false,
-        sentEmail: false,
-        exception: null,
-      ));
-    });
-
     on<AuthEventGoToVerifyEmail>((event, emit) {
       emit(const AuthStateVerifyEmail(
         isLoading: false,
@@ -201,30 +193,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on Exception catch (e) {
         emit((state as AuthStateLoggedOut).copyWith(
           isLoading: false,
-          exception: e,
-        ));
-      }
-    });
-
-    on<AuthEventResetPassword>((event, emit) async {
-      emit(const AuthStateForgotPassword(
-        isLoading: true,
-        loadingMessage: 'Sending e-mail...',
-        sentEmail: false,
-        exception: null,
-      ));
-
-      try {
-        await authService.sendPasswordResetEmail(email: event.email);
-        emit(const AuthStateForgotPassword(
-          isLoading: false,
-          sentEmail: true,
-          exception: null,
-        ));
-      } on Exception catch (e) {
-        emit(AuthStateForgotPassword(
-          isLoading: false,
-          sentEmail: false,
           exception: e,
         ));
       }

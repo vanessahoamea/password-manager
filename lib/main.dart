@@ -9,7 +9,6 @@ import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/bloc/theme/theme_cubit.dart';
 import 'package:password_manager/components/page_wrapper.dart';
 import 'package:password_manager/overlays/loading_screen.dart';
-import 'package:password_manager/pages/forgot_password.dart';
 import 'package:password_manager/pages/generator.dart';
 import 'package:password_manager/pages/login.dart';
 import 'package:password_manager/pages/passwords.dart';
@@ -90,8 +89,6 @@ class HomePage extends StatelessWidget {
             return const LoginPage();
           case AuthStateRegistering:
             return const RegisterPage();
-          case AuthStateForgotPassword:
-            return const ForgotPasswordPage();
           case AuthStateVerifyEmail:
             return const VerifyEmailPage();
           case AuthStateLoggedIn:

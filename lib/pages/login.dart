@@ -9,7 +9,6 @@ import 'package:password_manager/components/secondary_button.dart';
 import 'package:password_manager/services/auth/auth_exceptions.dart';
 import 'package:password_manager/services/biometrics/biometrics_exceptions.dart';
 import 'package:password_manager/utils/dialogs/error_dialog.dart';
-import 'package:password_manager/utils/theme_extensions/global_colors.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -31,8 +30,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalColors colors = Theme.of(context).extension<GlobalColors>()!;
-
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthStateLoggedOut) {
@@ -76,170 +73,155 @@ class _LoginPageState extends State<LoginPage> {
       builder: (context, state) {
         return Scaffold(
           body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // icon and text
-                const Icon(Icons.lock, size: 80),
-                const SizedBox(height: 2.5),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Text(
-                    'Log in to manage your passwords',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                    textAlign: TextAlign.center,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // icon and text
+                  const Icon(Icons.lock, size: 80),
+                  const SizedBox(height: 2.5),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Text(
+                      'Log in to manage your passwords',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 30),
+                  const SizedBox(height: 30),
 
-                // input fields
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: PrimaryInputField(
-                    controller: _emailController,
-                    hintText: 'E-mail address',
-                    obscureText: false,
-                    initialValue:
-                        state is AuthStateLoggedOut && state.cachedEmail != null
-                            ? state.cachedEmail
-                            : '',
+                  // input fields
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: PrimaryInputField(
+                      controller: _emailController,
+                      hintText: 'E-mail address',
+                      obscureText: false,
+                      initialValue: state is AuthStateLoggedOut &&
+                              state.cachedEmail != null
+                          ? state.cachedEmail
+                          : '',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: PrimaryInputField(
-                    controller: _passwordController,
-                    hintText: 'Master password',
-                    obscureText: true,
-                    isObscured: state is AuthStateLoggedOut
-                        ? !state.showPassword
-                        : true,
-                    toggleVisibility: () {
-                      context
-                          .read<AuthBloc>()
-                          .add(AuthEventUpdateLoggedOutState(
-                            showPassword: state is AuthStateLoggedOut
-                                ? !state.showPassword
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: PrimaryInputField(
+                      controller: _passwordController,
+                      hintText: 'Master password',
+                      obscureText: true,
+                      isObscured: state is AuthStateLoggedOut
+                          ? !state.showPassword
+                          : true,
+                      toggleVisibility: () {
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthEventUpdateLoggedOutState(
+                              showPassword: state is AuthStateLoggedOut
+                                  ? !state.showPassword
+                                  : false,
+                            ));
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // remember email option
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 25.0,
+                          height: 25.0,
+                          child: Checkbox(
+                            value: state is AuthStateLoggedOut
+                                ? state.rememberUser
                                 : false,
-                          ));
-                    },
+                            onChanged: (value) {
+                              context
+                                  .read<AuthBloc>()
+                                  .add(AuthEventUpdateLoggedOutState(
+                                    rememberUser: value ?? false,
+                                  ));
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        const Text('Remember me'),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
+                  const SizedBox(height: 30),
 
-                // remember email option and password reset link
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 25.0,
-                            height: 25.0,
-                            child: Checkbox(
-                              value: state is AuthStateLoggedOut
+                  // buttons and registration link
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: PrimaryButton(
+                      text: 'Log in',
+                      onTap: () {
+                        context.read<AuthBloc>().add(AuthEventLogIn(
+                              email: _emailController.text,
+                              password: _passwordController.text,
+                              rememberUser: state is AuthStateLoggedOut
                                   ? state.rememberUser
                                   : false,
-                              onChanged: (value) {
-                                context
-                                    .read<AuthBloc>()
-                                    .add(AuthEventUpdateLoggedOutState(
-                                      rememberUser: value ?? false,
-                                    ));
-                              },
+                            ));
+                      },
+                    ),
+                  ),
+                  Builder(
+                    builder: (context) {
+                      if (state is AuthStateLoggedOut &&
+                          state.hasBiometricsEnabled &&
+                          state.cachedEmail != null &&
+                          state.cachedEmail!.isNotEmpty) {
+                        return Column(
+                          children: [
+                            const SizedBox(height: 5),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 25.0),
+                              child: SecondaryButton(
+                                text: 'Authenticate with biometrics',
+                                onTap: () {
+                                  context.read<AuthBloc>().add(
+                                      const AuthEventAuthenticateWithBiometrics());
+                                },
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 5),
-                          const Text('Remember me'),
-                        ],
-                      ),
+                          ],
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Don\'t have an account?'),
+                      const SizedBox(width: 5),
                       GestureDetector(
                         onTap: () {
                           context
                               .read<AuthBloc>()
-                              .add(const AuthEventGoToForgotPassword());
+                              .add(const AuthEventGoToRegister());
                         },
                         child: Text(
-                          'Forgot password?',
+                          'Register now',
                           style: TextStyle(
-                            color: colors.secondaryTextColor,
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
+                      )
                     ],
                   ),
-                ),
-                const SizedBox(height: 30),
-
-                // buttons and registration link
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: PrimaryButton(
-                    text: 'Log in',
-                    onTap: () {
-                      context.read<AuthBloc>().add(AuthEventLogIn(
-                            email: _emailController.text,
-                            password: _passwordController.text,
-                            rememberUser: state is AuthStateLoggedOut
-                                ? state.rememberUser
-                                : false,
-                          ));
-                    },
-                  ),
-                ),
-                Builder(
-                  builder: (context) {
-                    if (state is AuthStateLoggedOut &&
-                        state.hasBiometricsEnabled &&
-                        state.cachedEmail != null &&
-                        state.cachedEmail!.isNotEmpty) {
-                      return Column(
-                        children: [
-                          const SizedBox(height: 5),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 25.0),
-                            child: SecondaryButton(
-                              text: 'Authenticate with biometrics',
-                              onTap: () {
-                                context.read<AuthBloc>().add(
-                                    const AuthEventAuthenticateWithBiometrics());
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Don\'t have an account?'),
-                    const SizedBox(width: 5),
-                    GestureDetector(
-                      onTap: () {
-                        context
-                            .read<AuthBloc>()
-                            .add(const AuthEventGoToRegister());
-                      },
-                      child: Text(
-                        'Register now',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

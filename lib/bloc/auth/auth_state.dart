@@ -116,18 +116,6 @@ class AuthStateLoggedIn extends AuthState {
   }
 }
 
-class AuthStateForgotPassword extends AuthState {
-  final bool sentEmail;
-  final Exception? exception;
-
-  const AuthStateForgotPassword({
-    required super.isLoading,
-    super.loadingMessage,
-    required this.sentEmail,
-    required this.exception,
-  });
-}
-
 class AuthStateVerifyEmail extends AuthState {
   final bool sentEmail;
   final Exception? exception;
