@@ -47,6 +47,7 @@ class App extends StatelessWidget {
                 create: (context) => AuthBloc(
                   AuthService.fromFirebase(),
                   LocalStorageService(),
+                  BiometricsService(),
                 ),
               ),
               BlocProvider<ManagerBloc>(

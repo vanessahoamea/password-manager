@@ -19,6 +19,7 @@ class AuthStateUninitialized extends AuthState {
 class AuthStateLoggedOut extends AuthState {
   final bool rememberUser;
   final bool showPassword;
+  final bool hasBiometricsEnabled;
   final String? cachedEmail;
   final Exception? exception;
 
@@ -27,6 +28,7 @@ class AuthStateLoggedOut extends AuthState {
     super.loadingMessage,
     required this.rememberUser,
     required this.showPassword,
+    required this.hasBiometricsEnabled,
     this.cachedEmail,
     required this.exception,
   });
@@ -36,6 +38,7 @@ class AuthStateLoggedOut extends AuthState {
     String? loadingMessage,
     bool? rememberUser,
     bool? showPassword,
+    bool? hasBiometricsEnabled,
     String? cachedEmail,
     Exception? exception,
   }) {
@@ -44,6 +47,7 @@ class AuthStateLoggedOut extends AuthState {
       loadingMessage: loadingMessage ?? this.loadingMessage,
       rememberUser: rememberUser ?? this.rememberUser,
       showPassword: showPassword ?? this.showPassword,
+      hasBiometricsEnabled: hasBiometricsEnabled ?? this.hasBiometricsEnabled,
       cachedEmail: cachedEmail ?? this.cachedEmail,
       exception: exception,
     );

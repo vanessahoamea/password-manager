@@ -30,9 +30,9 @@ class BiometricsService {
         .isNotEmpty;
   }
 
-  void authenticate() async {
+  Future<void> authenticateWithBiometrics() async {
     try {
-      await auth.authenticate(
+      final success = await auth.authenticate(
         localizedReason: 'Authenticate to access your passwords.',
         options: const AuthenticationOptions(
           biometricOnly: true,
@@ -40,8 +40,12 @@ class BiometricsService {
           stickyAuth: true,
         ),
       );
+
+      if (!success) {
+        throw BiometricsExceptionInvalidCredentials();
+      }
     } on PlatformException catch (_) {
-      throw BiometricsException();
+      throw BiometricsExceptionNotSupported();
     }
   }
 }

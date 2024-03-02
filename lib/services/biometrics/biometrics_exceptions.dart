@@ -1,1 +1,3 @@
-class BiometricsException implements Exception {}
+class BiometricsExceptionNotSupported implements Exception {}
+
+class BiometricsExceptionInvalidCredentials implements Exception {}

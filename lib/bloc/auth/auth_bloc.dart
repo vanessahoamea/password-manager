@@ -3,33 +3,44 @@ import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/bloc/auth/auth_state.dart';
 import 'package:password_manager/services/auth/app_user.dart';
 import 'package:password_manager/services/auth/auth_service.dart';
+import 'package:password_manager/services/biometrics/biometrics_service.dart';
 import 'package:password_manager/services/local_storage/local_storage_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   late bool rememberUser;
   late Map<String, String> credentials;
+  late bool hasBiometricsEnabled;
 
-  AuthBloc(AuthService authService, LocalStorageService localStorageService)
-      : super(const AuthStateUninitialized(isLoading: false)) {
+  AuthBloc(
+    AuthService authService,
+    LocalStorageService localStorageService,
+    BiometricsService biometricsService,
+  ) : super(const AuthStateUninitialized(isLoading: false)) {
     on<AuthEventInitialize>((event, emit) async {
       await authService.initialize();
 
-      final [rememberUser as bool, credentials as Map<String, String>] =
-          await Future.wait([
+      final [
+        rememberUser as bool,
+        credentials as Map<String, String>,
+        hasBiometricsEnabled as bool
+      ] = await Future.wait([
         localStorageService.getRememberUser(),
-        localStorageService.getCredentials()
+        localStorageService.getCredentials(),
+        localStorageService.getHasBiometricsEnabled()
       ]);
       this.rememberUser = rememberUser;
       this.credentials = credentials;
+      this.hasBiometricsEnabled = hasBiometricsEnabled;
 
       try {
         emit(AuthStateLoggedIn(isLoading: false, user: authService.user));
       } catch (_) {
         emit(AuthStateLoggedOut(
           isLoading: false,
-          rememberUser: this.rememberUser,
+          rememberUser: rememberUser,
           showPassword: false,
-          cachedEmail: this.credentials['email'],
+          hasBiometricsEnabled: hasBiometricsEnabled,
+          cachedEmail: credentials['email'],
           exception: null,
         ));
       }
@@ -50,6 +61,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthStateLoggedOut(
         isLoading: false,
         rememberUser: rememberUser,
+        hasBiometricsEnabled: hasBiometricsEnabled,
         cachedEmail: credentials['email'],
         showPassword: false,
         exception: null,
@@ -170,6 +182,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
+    on<AuthEventAuthenticateWithBiometrics>((event, emit) async {
+      emit((state as AuthStateLoggedOut).copyWith(
+        isLoading: true,
+        loadingMessage: 'Logging you in...',
+        exception: null,
+      ));
+
+      try {
+        await biometricsService.authenticateWithBiometrics();
+        final user = await authService.logIn(
+          email: credentials['email'] ?? '',
+          password: credentials['password'] ?? '',
+        );
+
+        emit((state as AuthStateLoggedOut).copyWith(isLoading: false));
+        emit(AuthStateLoggedIn(isLoading: false, user: user));
+      } on Exception catch (e) {
+        emit((state as AuthStateLoggedOut).copyWith(
+          isLoading: false,
+          exception: e,
+        ));
+      }
+    });
+
     on<AuthEventResetPassword>((event, emit) async {
       emit(const AuthStateForgotPassword(
         isLoading: true,
@@ -238,6 +274,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       try {
         await authService.logOut();
+        hasBiometricsEnabled =
+            await localStorageService.getHasBiometricsEnabled();
 
         switch (state.runtimeType) {
           case AuthStateVerifyEmail:
@@ -254,6 +292,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           isLoading: false,
           rememberUser: rememberUser,
           showPassword: false,
+          hasBiometricsEnabled: hasBiometricsEnabled,
           cachedEmail: credentials['email'],
           exception: null,
         ));
@@ -262,6 +301,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           isLoading: false,
           rememberUser: rememberUser,
           showPassword: false,
+          hasBiometricsEnabled: hasBiometricsEnabled,
           cachedEmail: credentials['email'],
           exception: e,
         ));

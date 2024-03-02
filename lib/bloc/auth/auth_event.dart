@@ -72,6 +72,10 @@ class AuthEventLogIn extends AuthEvent {
   });
 }
 
+class AuthEventAuthenticateWithBiometrics extends AuthEvent {
+  const AuthEventAuthenticateWithBiometrics();
+}
+
 class AuthEventResetPassword extends AuthEvent {
   final String email;
 

@@ -5,7 +5,9 @@ import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/bloc/auth/auth_state.dart';
 import 'package:password_manager/components/primary_button.dart';
 import 'package:password_manager/components/primary_input_field.dart';
+import 'package:password_manager/components/secondary_button.dart';
 import 'package:password_manager/services/auth/auth_exceptions.dart';
+import 'package:password_manager/services/biometrics/biometrics_exceptions.dart';
 import 'package:password_manager/utils/dialogs/error_dialog.dart';
 import 'package:password_manager/utils/theme_extensions/global_colors.dart';
 
@@ -52,6 +54,18 @@ class _LoginPageState extends State<LoginPage> {
               showErrorDialog(
                 context,
                 'Something went wrong. Try again later.',
+              );
+              break;
+            case BiometricsExceptionNotSupported:
+              showErrorDialog(
+                context,
+                'This device does not support biometrics authentication. Try logging in with your e-mail and master password instead.',
+              );
+              break;
+            case BiometricsExceptionInvalidCredentials:
+              showErrorDialog(
+                context,
+                'Biometrics authentication failed. Try logging in with your e-mail and master password instead.',
               );
               break;
             default:
@@ -160,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 30),
 
-                // button and registration link
+                // buttons and registration link
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: PrimaryButton(
@@ -175,6 +189,33 @@ class _LoginPageState extends State<LoginPage> {
                           ));
                     },
                   ),
+                ),
+                Builder(
+                  builder: (context) {
+                    if (state is AuthStateLoggedOut &&
+                        state.hasBiometricsEnabled &&
+                        state.cachedEmail != null &&
+                        state.cachedEmail!.isNotEmpty) {
+                      return Column(
+                        children: [
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: SecondaryButton(
+                              text: 'Authenticate with biometrics',
+                              onTap: () {
+                                context.read<AuthBloc>().add(
+                                    const AuthEventAuthenticateWithBiometrics());
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
                 ),
                 const SizedBox(height: 15),
                 Row(
