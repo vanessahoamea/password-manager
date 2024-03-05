@@ -46,6 +46,7 @@ class FirebaseAuthProvider extends AuthProvider {
           AuthService.validatePasswordComplexity(password);
 
       if (email.isEmpty ||
+          repeatPassword.isEmpty ||
           isPasswordLongEnough == null ||
           isPasswordComplexEnough == null) {
         throw AuthExceptionEmptyFields();
@@ -126,26 +127,6 @@ class FirebaseAuthProvider extends AuthProvider {
       await user.sendEmailVerification();
     } else {
       throw AuthExceptionUserNotLoggedIn();
-    }
-  }
-
-  @override
-  Future<void> sendPasswordResetEmail({required String email}) async {
-    try {
-      if (email.isEmpty) {
-        throw AuthExceptionEmptyFields();
-      }
-
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'invalid-email':
-          throw AuthExceptionInvalidEmail();
-        default:
-          throw AuthExceptionGeneric();
-      }
-    } catch (_) {
-      rethrow;
     }
   }
 }

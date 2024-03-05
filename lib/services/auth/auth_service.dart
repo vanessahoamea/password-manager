@@ -33,10 +33,6 @@ class AuthService {
 
   Future<void> sendEmailVerification() => authProvider.sendEmailVerification();
 
-  Future<void> sendPasswordResetEmail({required String email}) {
-    return authProvider.sendPasswordResetEmail(email: email);
-  }
-
   static bool? validatePasswordLength(String password) {
     if (password.isEmpty) {
       return null;
