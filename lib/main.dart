@@ -100,33 +100,37 @@ class HomePage extends StatelessWidget {
                 //
               },
               builder: (context, managerState) {
-                final Widget body;
-
                 switch (managerState.runtimeType) {
                   case ManagerStatePasswordsPage:
-                    body = const PasswordsPage();
-                    break;
-                  case ManagerStateGeneratorPage:
-                    body = const GeneratorPage();
-                    break;
-                  case ManagerStateSettingsPage:
-                    body = const SettingsPage();
-                    break;
-                  default:
-                    body = const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(child: CircularProgressIndicator()),
-                      ],
+                    return PageWrapper(
+                      title: managerState.title ?? 'My Passwords',
+                      body: const PasswordsPage(),
+                      navbarIndex: managerState.navbarIndex ?? 0,
                     );
-                    break;
+                  case ManagerStateGeneratorPage:
+                    return PageWrapper(
+                      title: managerState.title ?? 'Generate Password',
+                      body: const GeneratorPage(),
+                      navbarIndex: managerState.navbarIndex ?? 1,
+                    );
+                  case ManagerStateSettingsPage:
+                    return PageWrapper(
+                      title: managerState.title ?? 'Settings',
+                      body: const SettingsPage(),
+                      navbarIndex: managerState.navbarIndex ?? 2,
+                    );
+                  default:
+                    return PageWrapper(
+                      title: managerState.title ?? 'My Passwords',
+                      body: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(child: CircularProgressIndicator()),
+                        ],
+                      ),
+                      navbarIndex: managerState.navbarIndex ?? 0,
+                    );
                 }
-
-                return PageWrapper(
-                  title: managerState.title ?? '',
-                  body: body,
-                  navbarIndex: managerState.navbarIndex ?? 0,
-                );
               },
             );
           default:

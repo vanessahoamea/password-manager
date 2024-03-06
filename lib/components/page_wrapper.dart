@@ -4,6 +4,7 @@ import 'package:password_manager/bloc/auth/auth_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/components/navbar.dart';
 import 'package:password_manager/extensions/dark_mode.dart';
+import 'package:password_manager/pages/single_password.dart';
 import 'package:password_manager/utils/dialogs/confirmation_dialog.dart';
 
 class PageWrapper extends StatelessWidget {
@@ -45,7 +46,12 @@ class PageWrapper extends StatelessWidget {
       bottomNavigationBar: Navbar(selectedIndex: navbarIndex),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          //
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SinglePasswordPage(),
+            ),
+          );
         },
         shape: const CircleBorder(),
         tooltip: 'Add password',
