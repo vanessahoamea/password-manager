@@ -76,6 +76,30 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
       ));
     });
 
+    on<ManagerEventGoToSinglePassword>((event, emit) async {
+      final [encryptionKey, iv] = await localStorageService.getEncryptionKey();
+      String decryptedPassword = '';
+
+      if (event.password != null) {
+        decryptedPassword = await PasswordService.decrypt(
+          encryptedPassword: event.password!.encryptedPassword,
+          encryptionKey: encryptionKey,
+          iv: iv,
+        );
+      }
+
+      emit(ManagerStateSinglePasswordPage(
+        user: user,
+        password: event.password,
+        decryptedPassword: decryptedPassword,
+        previousState: state,
+      ));
+    });
+
+    on<ManagerEventReturnToPreviousState>((event, emit) {
+      emit(event.previousState);
+    });
+
     on<ManagerEventFilterPasswords>((event, emit) {
       if (event.term.isEmpty) {
         filteredPasswords = null;

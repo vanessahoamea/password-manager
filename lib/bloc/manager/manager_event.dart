@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/services/auth/app_user.dart';
 import 'package:password_manager/services/passwords/password.dart';
 
@@ -23,6 +24,18 @@ class ManagerEventGoToGeneratorPage extends ManagerEvent {
 
 class ManagerEventGoToSettingsPage extends ManagerEvent {
   const ManagerEventGoToSettingsPage();
+}
+
+class ManagerEventGoToSinglePassword extends ManagerEvent {
+  final Password? password;
+
+  const ManagerEventGoToSinglePassword({required this.password});
+}
+
+class ManagerEventReturnToPreviousState extends ManagerEvent {
+  final ManagerState previousState;
+
+  const ManagerEventReturnToPreviousState({required this.previousState});
 }
 
 class ManagerEventFilterPasswords extends ManagerEvent {

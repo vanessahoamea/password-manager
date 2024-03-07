@@ -14,6 +14,7 @@ import 'package:password_manager/pages/login.dart';
 import 'package:password_manager/pages/passwords.dart';
 import 'package:password_manager/pages/register.dart';
 import 'package:password_manager/pages/settings.dart';
+import 'package:password_manager/pages/single_password.dart';
 import 'package:password_manager/pages/verify_email.dart';
 import 'package:password_manager/services/auth/auth_service.dart';
 import 'package:password_manager/services/biometrics/biometrics_service.dart';
@@ -118,6 +119,12 @@ class HomePage extends StatelessWidget {
                       title: managerState.title ?? 'Settings',
                       body: const SettingsPage(),
                       navbarIndex: managerState.navbarIndex ?? 2,
+                    );
+                  case ManagerStateSinglePasswordPage:
+                    managerState as ManagerStateSinglePasswordPage;
+                    return SinglePasswordPage(
+                      password: managerState.password,
+                      decryptedPassword: managerState.decryptedPassword,
                     );
                   default:
                     return PageWrapper(

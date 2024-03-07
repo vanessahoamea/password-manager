@@ -69,3 +69,16 @@ class ManagerStateSettingsPage extends ManagerState {
     );
   }
 }
+
+class ManagerStateSinglePasswordPage extends ManagerState {
+  final Password? password;
+  final String decryptedPassword;
+  final ManagerState previousState;
+
+  const ManagerStateSinglePasswordPage({
+    required super.user,
+    required this.password,
+    required this.decryptedPassword,
+    required this.previousState,
+  });
+}

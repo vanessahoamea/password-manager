@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:password_manager/pages/single_password.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:password_manager/bloc/manager/manager_bloc.dart';
+import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/services/passwords/password.dart';
 import 'package:password_manager/utils/theme_extensions/global_colors.dart';
 
@@ -47,14 +49,11 @@ class PasswordsList extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SinglePasswordPage(
+                  context
+                      .read<ManagerBloc>()
+                      .add(ManagerEventGoToSinglePassword(
                         password: passwords.elementAt(index),
-                      ),
-                    ),
-                  );
+                      ));
                 },
               );
             },
