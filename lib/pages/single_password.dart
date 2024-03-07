@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
+import 'package:password_manager/components/primary_button.dart';
+import 'package:password_manager/components/secondary_input_field.dart';
 import 'package:password_manager/services/passwords/password.dart';
 
 class SinglePasswordPage extends StatefulWidget {
@@ -64,20 +66,53 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                       ));
                 }
               },
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
           ),
           body: Builder(
             builder: (context) {
               if (state is ManagerStateSinglePasswordPage) {
-                return const Column(
-                  children: [
-                    // website field
+                return Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // website field
+                      SecondaryInputField(
+                        controller: _websiteController,
+                        labelText: 'Website',
+                        obscureText: false,
+                      ),
+                      const SizedBox(height: 10),
 
-                    // username field
+                      // username field
+                      SecondaryInputField(
+                        controller: _usernameController,
+                        labelText: 'Username (optional)',
+                        obscureText: false,
+                      ),
+                      const SizedBox(height: 10),
 
-                    // password field
-                  ],
+                      // password field
+                      SecondaryInputField(
+                        controller: _passwordController,
+                        labelText: 'Password',
+                        obscureText: true,
+                        isObscured: true,
+                        toggleVisibility: () {
+                          //
+                        },
+                      ),
+                      const SizedBox(height: 30),
+
+                      PrimaryButton(
+                        text: 'Save',
+                        onTap: () {
+                          //
+                        },
+                      ),
+                    ],
+                  ),
                 );
               } else {
                 return const Column(
