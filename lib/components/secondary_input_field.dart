@@ -59,13 +59,13 @@ class _SecondaryInputFieldState extends State<SecondaryInputField> {
                     ),
                     IconButton(
                       onPressed: () => _copyToClipboard(),
-                      icon: const Icon(Icons.copy),
+                      icon: Icon(Icons.copy, color: colors.textColor),
                     ),
                   ],
                 )
               : IconButton(
                   onPressed: () => _copyToClipboard(),
-                  icon: const Icon(Icons.copy),
+                  icon: Icon(Icons.copy, color: colors.textColor),
                 ),
         ),
         obscureText: widget.isObscured ?? false,

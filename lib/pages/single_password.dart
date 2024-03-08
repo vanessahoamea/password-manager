@@ -1,11 +1,14 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/components/primary_button.dart';
+import 'package:password_manager/components/secondary_button.dart';
 import 'package:password_manager/components/secondary_input_field.dart';
 import 'package:password_manager/services/passwords/password.dart';
+import 'package:password_manager/utils/theme_extensions/global_colors.dart';
 
 class SinglePasswordPage extends StatefulWidget {
   final Password? password;
@@ -25,6 +28,7 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
   final _websiteController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _linkRecoginzer = TapGestureRecognizer();
 
   @override
   void initState() {
@@ -32,6 +36,9 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
       _websiteController.text = widget.password!.website;
       _usernameController.text = widget.password!.username ?? '';
       _passwordController.text = widget.decryptedPassword;
+      _linkRecoginzer.onTap = () {
+        context.read<ManagerBloc>().add(const ManagerEventGoToGeneratorPage());
+      };
     }
     super.initState();
   }
@@ -41,12 +48,13 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
     _websiteController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
+    _linkRecoginzer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.password == null ? 'Add Password' : 'Edit Password';
+    final GlobalColors colors = Theme.of(context).extension<GlobalColors>()!;
 
     return BlocConsumer<ManagerBloc, ManagerState>(
       listener: (context, state) {
@@ -55,7 +63,7 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(title),
+            title: Text('${widget.password == null ? "Add" : "Edit"} Password'),
             leading: IconButton(
               onPressed: () {
                 if (state is ManagerStateSinglePasswordPage) {
@@ -77,23 +85,19 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // website field
+                      // input fields
                       SecondaryInputField(
                         controller: _websiteController,
                         labelText: 'Website',
                         obscureText: false,
                       ),
                       const SizedBox(height: 10),
-
-                      // username field
                       SecondaryInputField(
                         controller: _usernameController,
                         labelText: 'Username (optional)',
                         obscureText: false,
                       ),
                       const SizedBox(height: 10),
-
-                      // password field
                       SecondaryInputField(
                         controller: _passwordController,
                         labelText: 'Password',
@@ -103,14 +107,54 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                           //
                         },
                       ),
+                      const SizedBox(height: 10),
+
+                      // link to generator page
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              const TextSpan(
+                                text:
+                                    'Make sure to set a strong, hard to guess password. If you need help coming up with a good password, check out our ',
+                              ),
+                              TextSpan(
+                                text: 'password generator',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                recognizer: _linkRecoginzer,
+                              ),
+                              const TextSpan(text: '.'),
+                            ],
+                            style: TextStyle(color: colors.secondaryTextColor),
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 30),
 
+                      // save button + delete button (for existing passwords)
                       PrimaryButton(
                         text: 'Save',
                         onTap: () {
                           //
                         },
                       ),
+                      if (widget.password != null)
+                        Column(
+                          children: [
+                            const SizedBox(height: 5),
+                            SecondaryButton(
+                              text: 'Delete',
+                              onTap: () {
+                                //
+                              },
+                              color: colors.errorColor,
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                 );

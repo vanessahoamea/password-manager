@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:password_manager/extensions/dark_mode.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
@@ -16,15 +15,6 @@ class PrimaryButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: context.isDarkMode
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
-                    blurRadius: 4,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
         ),
         child: Center(
           child: Text(

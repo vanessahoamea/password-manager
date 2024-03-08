@@ -28,7 +28,7 @@ class PasswordRequirements extends StatelessWidget {
     final GlobalColors colors = Theme.of(context).extension<GlobalColors>()!;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 30.0),
+      margin: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Column(
         children: [
           Row(

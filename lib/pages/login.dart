@@ -74,27 +74,26 @@ class _LoginPageState extends State<LoginPage> {
         return Scaffold(
           body: Center(
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // icon and text
-                  const Icon(Icons.lock, size: 80),
-                  const SizedBox(height: 2.5),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Text(
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // icon and text
+                    const Icon(Icons.lock, size: 80),
+                    const SizedBox(height: 2.5),
+                    const Text(
                       'Log in to manage your passwords',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                  ),
-                  const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
-                  // input fields
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: PrimaryInputField(
+                    // input fields
+                    PrimaryInputField(
                       controller: _emailController,
                       hintText: 'E-mail address',
                       obscureText: false,
@@ -103,11 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                           ? state.cachedEmail
                           : '',
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: PrimaryInputField(
+                    const SizedBox(height: 10),
+                    PrimaryInputField(
                       controller: _passwordController,
                       hintText: 'Master password',
                       obscureText: true,
@@ -124,41 +120,38 @@ class _LoginPageState extends State<LoginPage> {
                             ));
                       },
                     ),
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // remember email option
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 25.0,
-                          height: 25.0,
-                          child: Checkbox(
-                            value: state is AuthStateLoggedOut
-                                ? state.rememberUser
-                                : false,
-                            onChanged: (value) {
-                              context
-                                  .read<AuthBloc>()
-                                  .add(AuthEventUpdateLoggedOutState(
-                                    rememberUser: value ?? false,
-                                  ));
-                            },
+                    // remember email option
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 25.0,
+                            height: 25.0,
+                            child: Checkbox(
+                              value: state is AuthStateLoggedOut
+                                  ? state.rememberUser
+                                  : false,
+                              onChanged: (value) {
+                                context
+                                    .read<AuthBloc>()
+                                    .add(AuthEventUpdateLoggedOutState(
+                                      rememberUser: value ?? false,
+                                    ));
+                              },
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 5),
-                        const Text('Remember me'),
-                      ],
+                          const SizedBox(width: 5),
+                          const Text('Remember me'),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
-                  // buttons and registration link
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: PrimaryButton(
+                    // buttons and registration link
+                    PrimaryButton(
                       text: 'Log in',
                       onTap: () {
                         context.read<AuthBloc>().add(AuthEventLogIn(
@@ -170,57 +163,53 @@ class _LoginPageState extends State<LoginPage> {
                             ));
                       },
                     ),
-                  ),
-                  Builder(
-                    builder: (context) {
-                      if (state is AuthStateLoggedOut &&
-                          state.hasBiometricsEnabled &&
-                          state.cachedEmail != null &&
-                          state.cachedEmail!.isNotEmpty) {
-                        return Column(
-                          children: [
-                            const SizedBox(height: 5),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25.0),
-                              child: SecondaryButton(
+                    Builder(
+                      builder: (context) {
+                        if (state is AuthStateLoggedOut &&
+                            state.hasBiometricsEnabled &&
+                            state.cachedEmail != null &&
+                            state.cachedEmail!.isNotEmpty) {
+                          return Column(
+                            children: [
+                              const SizedBox(height: 5),
+                              SecondaryButton(
                                 text: 'Authenticate with biometrics',
                                 onTap: () {
                                   context.read<AuthBloc>().add(
                                       const AuthEventAuthenticateWithBiometrics());
                                 },
                               ),
+                            ],
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Don\'t have an account?'),
+                        const SizedBox(width: 5),
+                        GestureDetector(
+                          onTap: () {
+                            context
+                                .read<AuthBloc>()
+                                .add(const AuthEventGoToRegister());
+                          },
+                          child: Text(
+                            'Register now',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Don\'t have an account?'),
-                      const SizedBox(width: 5),
-                      GestureDetector(
-                        onTap: () {
-                          context
-                              .read<AuthBloc>()
-                              .add(const AuthEventGoToRegister());
-                        },
-                        child: Text(
-                          'Register now',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

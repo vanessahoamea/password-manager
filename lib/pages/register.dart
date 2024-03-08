@@ -75,36 +75,32 @@ class _RegisterPageState extends State<RegisterPage> {
         return Scaffold(
           body: Center(
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // icon and text
-                  const Icon(Icons.lock, size: 80),
-                  const SizedBox(height: 2.5),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Text(
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // icon and text
+                    const Icon(Icons.lock, size: 80),
+                    const SizedBox(height: 2.5),
+                    const Text(
                       'Create an account to safely store your passwords',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                  ),
-                  const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
-                  // input fields
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: PrimaryInputField(
+                    // input fields
+                    PrimaryInputField(
                       controller: _emailController,
                       hintText: 'E-mail address',
                       obscureText: false,
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: PrimaryInputField(
+                    const SizedBox(height: 10),
+                    PrimaryInputField(
                       controller: _passwordController,
                       hintText: 'Master password',
                       obscureText: true,
@@ -126,11 +122,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             ));
                       },
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: PrimaryInputField(
+                    const SizedBox(height: 10),
+                    PrimaryInputField(
                       controller: _confirmPasswordController,
                       hintText: 'Repeat master password',
                       obscureText: true,
@@ -147,32 +140,29 @@ class _RegisterPageState extends State<RegisterPage> {
                             ));
                       },
                     ),
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // password requirements
-                  Builder(
-                    builder: (context) {
-                      if (state is AuthStateRegistering) {
-                        return PasswordRequirements(
-                          isPasswordLongEnough: state.isPasswordLongEnough,
-                          isPasswordComplexEnough:
-                              state.isPasswordComplexEnough,
-                        );
-                      } else {
-                        return const PasswordRequirements(
-                          isPasswordLongEnough: null,
-                          isPasswordComplexEnough: null,
-                        );
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 30),
+                    // password requirements
+                    Builder(
+                      builder: (context) {
+                        if (state is AuthStateRegistering) {
+                          return PasswordRequirements(
+                            isPasswordLongEnough: state.isPasswordLongEnough,
+                            isPasswordComplexEnough:
+                                state.isPasswordComplexEnough,
+                          );
+                        } else {
+                          return const PasswordRequirements(
+                            isPasswordLongEnough: null,
+                            isPasswordComplexEnough: null,
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 30),
 
-                  // button and login link
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: PrimaryButton(
+                    // button and login link
+                    PrimaryButton(
                       text: 'Register',
                       onTap: () {
                         context.read<AuthBloc>().add(AuthEventRegister(
@@ -182,30 +172,30 @@ class _RegisterPageState extends State<RegisterPage> {
                             ));
                       },
                     ),
-                  ),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Already have an account?'),
-                      const SizedBox(width: 5),
-                      GestureDetector(
-                        onTap: () {
-                          context
-                              .read<AuthBloc>()
-                              .add(const AuthEventGoToLogIn());
-                        },
-                        child: Text(
-                          'Log in',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
+                    const SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Already have an account?'),
+                        const SizedBox(width: 5),
+                        GestureDetector(
+                          onTap: () {
+                            context
+                                .read<AuthBloc>()
+                                .add(const AuthEventGoToLogIn());
+                          },
+                          child: Text(
+                            'Log in',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
