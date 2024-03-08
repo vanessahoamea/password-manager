@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:password_manager/utils/theme_extensions/input_field_colors.dart';
 
 class SecondaryInputField extends StatefulWidget {
@@ -6,6 +7,7 @@ class SecondaryInputField extends StatefulWidget {
   final String labelText;
   final bool obscureText;
   final bool? isObscured;
+  final void Function(String) onChanged;
   final void Function()? toggleVisibility;
 
   const SecondaryInputField({
@@ -14,6 +16,7 @@ class SecondaryInputField extends StatefulWidget {
     required this.labelText,
     required this.obscureText,
     this.isObscured,
+    required this.onChanged,
     this.toggleVisibility,
   });
 
@@ -22,8 +25,8 @@ class SecondaryInputField extends StatefulWidget {
 }
 
 class _SecondaryInputFieldState extends State<SecondaryInputField> {
-  void _copyToClipboard() {
-    //
+  void _copyToClipboard() async {
+    await Clipboard.setData(ClipboardData(text: widget.controller.text));
   }
 
   @override
@@ -69,6 +72,7 @@ class _SecondaryInputFieldState extends State<SecondaryInputField> {
                 ),
         ),
         obscureText: widget.isObscured ?? false,
+        onChanged: widget.onChanged,
       ),
     );
   }

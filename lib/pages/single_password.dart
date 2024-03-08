@@ -8,6 +8,7 @@ import 'package:password_manager/components/primary_button.dart';
 import 'package:password_manager/components/secondary_button.dart';
 import 'package:password_manager/components/secondary_input_field.dart';
 import 'package:password_manager/services/passwords/password.dart';
+import 'package:password_manager/utils/dialogs/confirmation_dialog.dart';
 import 'package:password_manager/utils/theme_extensions/global_colors.dart';
 
 class SinglePasswordPage extends StatefulWidget {
@@ -29,6 +30,7 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _linkRecoginzer = TapGestureRecognizer();
+  bool _hasUnsavedChanges = false;
 
   @override
   void initState() {
@@ -37,7 +39,23 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
       _usernameController.text = widget.password!.username ?? '';
       _passwordController.text = widget.decryptedPassword;
       _linkRecoginzer.onTap = () {
-        context.read<ManagerBloc>().add(const ManagerEventGoToGeneratorPage());
+        if (!_hasUnsavedChanges) {
+          context
+              .read<ManagerBloc>()
+              .add(const ManagerEventGoToGeneratorPage());
+        } else {
+          showConfirmationDialog(
+            context,
+            'You have unsaved changes',
+            'Are you sure you want to leave? Your changes will lost unless you save them.',
+          ).then((value) {
+            if (value) {
+              context
+                  .read<ManagerBloc>()
+                  .add(const ManagerEventGoToGeneratorPage());
+            }
+          });
+        }
       };
     }
     super.initState();
@@ -50,6 +68,20 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
     _passwordController.dispose();
     _linkRecoginzer.dispose();
     super.dispose();
+  }
+
+  void _updateHasUnsavedChanges() {
+    final password = widget.password;
+    if (password != null) {
+      _hasUnsavedChanges = (_websiteController.text != password.website) ||
+          (_usernameController.text != (password.username ?? '')) ||
+          (_passwordController.text != widget.decryptedPassword);
+    } else {
+      _hasUnsavedChanges = _hasUnsavedChanges ||
+          _websiteController.text.isNotEmpty ||
+          _usernameController.text.isNotEmpty ||
+          _passwordController.text.isNotEmpty;
+    }
   }
 
   @override
@@ -67,11 +99,27 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
             leading: IconButton(
               onPressed: () {
                 if (state is ManagerStateSinglePasswordPage) {
-                  context
-                      .read<ManagerBloc>()
-                      .add(ManagerEventReturnToPreviousState(
-                        previousState: state.previousState,
-                      ));
+                  if (!_hasUnsavedChanges) {
+                    context
+                        .read<ManagerBloc>()
+                        .add(ManagerEventReturnToPreviousState(
+                          previousState: state.previousState,
+                        ));
+                  } else {
+                    showConfirmationDialog(
+                      context,
+                      'You have unsaved changes',
+                      'Are you sure you want to leave? Your changes will be lost unless you save them.',
+                    ).then((value) {
+                      if (value) {
+                        context
+                            .read<ManagerBloc>()
+                            .add(ManagerEventReturnToPreviousState(
+                              previousState: state.previousState,
+                            ));
+                      }
+                    });
+                  }
                 }
               },
               icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -90,12 +138,14 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                         controller: _websiteController,
                         labelText: 'Website',
                         obscureText: false,
+                        onChanged: (_) => _updateHasUnsavedChanges(),
                       ),
                       const SizedBox(height: 10),
                       SecondaryInputField(
                         controller: _usernameController,
                         labelText: 'Username (optional)',
                         obscureText: false,
+                        onChanged: (_) => _updateHasUnsavedChanges(),
                       ),
                       const SizedBox(height: 10),
                       SecondaryInputField(
@@ -106,6 +156,7 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                         toggleVisibility: () {
                           //
                         },
+                        onChanged: (_) => _updateHasUnsavedChanges(),
                       ),
                       const SizedBox(height: 10),
 
@@ -139,7 +190,7 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                       PrimaryButton(
                         text: 'Save',
                         onTap: () {
-                          //
+                          _hasUnsavedChanges = false;
                         },
                       ),
                       if (widget.password != null)
