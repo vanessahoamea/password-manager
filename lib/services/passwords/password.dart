@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Password {
-  final String id;
+  final String? id;
   final String userId;
   final String website;
   final String? username;
   final String encryptedPassword;
 
   Password({
-    required this.id,
+    this.id,
     required this.userId,
     required this.website,
     this.username,
@@ -29,12 +29,20 @@ class Password {
   }
 
   Map<String, String?> toMap() {
-    return {
-      'id': id,
+    Map<String, String> map = {
       'userId': userId,
       'website': website,
-      'username': username,
       'encryptedPassword': encryptedPassword,
     };
+
+    if (id != null) {
+      map['id'] = id!;
+    }
+
+    if (username != null) {
+      map['username'] = username!;
+    }
+
+    return map;
   }
 }

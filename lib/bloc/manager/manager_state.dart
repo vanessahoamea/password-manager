@@ -74,11 +74,37 @@ class ManagerStateSinglePasswordPage extends ManagerState {
   final Password? password;
   final String decryptedPassword;
   final ManagerState previousState;
+  final bool showPassword;
+  final bool isLoading;
+  final Exception? exception;
 
   const ManagerStateSinglePasswordPage({
     required super.user,
     required this.password,
     required this.decryptedPassword,
     required this.previousState,
+    required this.showPassword,
+    required this.isLoading,
+    required this.exception,
   });
+
+  ManagerStateSinglePasswordPage copyWith({
+    AppUser? user,
+    Password? password,
+    String? decryptedPassword,
+    ManagerState? previousState,
+    bool? showPassword,
+    bool? isLoading,
+    Exception? exception,
+  }) {
+    return ManagerStateSinglePasswordPage(
+      user: user ?? this.user,
+      password: password ?? this.password,
+      decryptedPassword: decryptedPassword ?? this.decryptedPassword,
+      previousState: previousState ?? this.previousState,
+      showPassword: showPassword ?? this.showPassword,
+      isLoading: isLoading ?? this.isLoading,
+      exception: exception,
+    );
+  }
 }

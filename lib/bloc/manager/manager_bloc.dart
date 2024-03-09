@@ -93,11 +93,10 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
         password: event.password,
         decryptedPassword: decryptedPassword,
         previousState: state,
+        showPassword: false,
+        isLoading: false,
+        exception: null,
       ));
-    });
-
-    on<ManagerEventReturnToPreviousState>((event, emit) {
-      emit(event.previousState);
     });
 
     on<ManagerEventFilterPasswords>((event, emit) {
@@ -122,6 +121,77 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
       emit((state as ManagerStateSettingsPage).copyWith(
         hasBiometricsEnabled: hasBiometricsEnabled,
       ));
+    });
+
+    on<ManagerEventReturnToPreviousState>((event, emit) {
+      emit(event.previousState);
+    });
+
+    on<ManagerEventUpdateSinglePasswordState>((event, emit) {
+      emit((state as ManagerStateSinglePasswordPage).copyWith(
+        showPassword: event.showPassword,
+      ));
+    });
+
+    on<ManagerEventSavePassword>((event, emit) async {
+      emit((state as ManagerStateSinglePasswordPage).copyWith(isLoading: true));
+
+      try {
+        final [encryptionKey, iv] =
+            await localStorageService.getEncryptionKey();
+        final encryptedPassword = await PasswordService.encrypt(
+          plaintextPassword: event.password,
+          encryptionKey: encryptionKey,
+          iv: iv,
+        );
+
+        // create new password
+        if (event.id == null) {
+          Password password = Password(
+            userId: user.id,
+            website: event.website,
+            username: event.username,
+            encryptedPassword: encryptedPassword,
+          );
+          await passwordService.createPassword(password: password);
+        }
+        // update existing password
+        else {
+          Password password = Password(
+            id: event.id!,
+            userId: user.id,
+            website: event.website,
+            username: event.username,
+            encryptedPassword: encryptedPassword,
+          );
+          await passwordService.updatePassword(password: password);
+        }
+
+        emit((state as ManagerStateSinglePasswordPage).copyWith(
+          isLoading: false,
+        ));
+      } on Exception catch (e) {
+        emit((state as ManagerStateSinglePasswordPage).copyWith(
+          isLoading: false,
+          exception: e,
+        ));
+      }
+    });
+
+    on<ManagerEventDeletePassword>((event, emit) async {
+      emit((state as ManagerStateSinglePasswordPage).copyWith(isLoading: true));
+
+      try {
+        await passwordService.deletePassword(passwordId: event.passwordId);
+        emit((state as ManagerStateSinglePasswordPage).copyWith(
+          isLoading: false,
+        ));
+      } on Exception catch (e) {
+        emit((state as ManagerStateSinglePasswordPage).copyWith(
+          isLoading: false,
+          exception: e,
+        ));
+      }
     });
   }
 }

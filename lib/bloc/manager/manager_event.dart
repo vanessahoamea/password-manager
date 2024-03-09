@@ -32,12 +32,6 @@ class ManagerEventGoToSinglePassword extends ManagerEvent {
   const ManagerEventGoToSinglePassword({required this.password});
 }
 
-class ManagerEventReturnToPreviousState extends ManagerEvent {
-  final ManagerState previousState;
-
-  const ManagerEventReturnToPreviousState({required this.previousState});
-}
-
 class ManagerEventFilterPasswords extends ManagerEvent {
   final String term;
   final Iterable<Password> passwords;
@@ -50,4 +44,36 @@ class ManagerEventFilterPasswords extends ManagerEvent {
 
 class ManagerEventToggleBiometrics extends ManagerEvent {
   const ManagerEventToggleBiometrics();
+}
+
+class ManagerEventReturnToPreviousState extends ManagerEvent {
+  final ManagerState previousState;
+
+  const ManagerEventReturnToPreviousState({required this.previousState});
+}
+
+class ManagerEventUpdateSinglePasswordState extends ManagerEvent {
+  final bool showPassword;
+
+  const ManagerEventUpdateSinglePasswordState({required this.showPassword});
+}
+
+class ManagerEventSavePassword extends ManagerEvent {
+  final String? id;
+  final String website;
+  final String? username;
+  final String password;
+
+  const ManagerEventSavePassword({
+    required this.id,
+    required this.website,
+    required this.username,
+    required this.password,
+  });
+}
+
+class ManagerEventDeletePassword extends ManagerEvent {
+  final String passwordId;
+
+  const ManagerEventDeletePassword({required this.passwordId});
 }
