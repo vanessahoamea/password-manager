@@ -25,6 +25,7 @@ class ManagerStateUninitialized extends ManagerState {
 
 class ManagerStatePasswordsPage extends ManagerState {
   final Stream<Iterable<Password>> passwords;
+  final String? searchTerm;
   final Iterable<Password>? filteredPasswords;
   final Exception? exception;
 
@@ -32,6 +33,7 @@ class ManagerStatePasswordsPage extends ManagerState {
     required super.user,
     required super.showToast,
     super.toastMessage,
+    required this.searchTerm,
     required this.passwords,
     required this.filteredPasswords,
     required this.exception,
@@ -42,6 +44,7 @@ class ManagerStatePasswordsPage extends ManagerState {
     bool? showToast,
     String? toastMessage,
     Stream<Iterable<Password>>? passwords,
+    String? searchTerm,
     Iterable<Password>? filteredPasswords,
     Exception? exception,
   }) {
@@ -50,6 +53,7 @@ class ManagerStatePasswordsPage extends ManagerState {
       showToast: showToast ?? this.showToast,
       toastMessage: toastMessage ?? this.toastMessage,
       passwords: passwords ?? this.passwords,
+      searchTerm: searchTerm,
       filteredPasswords: filteredPasswords,
       exception: exception,
     );

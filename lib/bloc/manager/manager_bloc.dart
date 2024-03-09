@@ -14,6 +14,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
   late Stream<Iterable<Password>> passwords;
   late bool supportsBiometrics;
   late bool hasBiometricsEnabled;
+  String? searchTerm;
   Iterable<Password>? filteredPasswords;
 
   ManagerBloc(
@@ -39,6 +40,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
           user: user,
           showToast: false,
           passwords: passwords,
+          searchTerm: null,
           filteredPasswords: null,
           exception: null,
         ));
@@ -51,6 +53,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
           user: user,
           showToast: false,
           passwords: passwords,
+          searchTerm: null,
           filteredPasswords: null,
           exception: e,
         ));
@@ -62,6 +65,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
         user: user,
         showToast: false,
         passwords: passwords,
+        searchTerm: searchTerm,
         filteredPasswords: filteredPasswords,
         exception: null,
       ));
@@ -80,32 +84,39 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
     });
 
     on<ManagerEventGoToSinglePassword>((event, emit) async {
-      final [encryptionKey, iv] = await localStorageService.getEncryptionKey();
-      String decryptedPassword = '';
+      try {
+        final [encryptionKey, iv] =
+            await localStorageService.getEncryptionKey();
+        String decryptedPassword = '';
 
-      if (event.password != null) {
-        decryptedPassword = await PasswordService.decrypt(
-          encryptedPassword: event.password!.encryptedPassword,
-          encryptionKey: encryptionKey,
-          iv: iv,
-        );
+        if (event.password != null) {
+          decryptedPassword = await PasswordService.decrypt(
+            encryptedPassword: event.password!.encryptedPassword,
+            encryptionKey: encryptionKey,
+            iv: iv,
+          );
+        }
+
+        emit(ManagerStateSinglePasswordPage(
+          user: user,
+          showToast: false,
+          password: event.password,
+          decryptedPassword: decryptedPassword,
+          showPassword: false,
+          isLoading: false,
+          exception: null,
+        ));
+      } on Exception catch (e) {
+        emit((state as ManagerStatePasswordsPage).copyWith(exception: e));
       }
-
-      emit(ManagerStateSinglePasswordPage(
-        user: user,
-        showToast: false,
-        password: event.password,
-        decryptedPassword: decryptedPassword,
-        showPassword: false,
-        isLoading: false,
-        exception: null,
-      ));
     });
 
     on<ManagerEventFilterPasswords>((event, emit) {
       if (event.term.isEmpty) {
+        searchTerm = null;
         filteredPasswords = null;
       } else {
+        searchTerm = event.term;
         filteredPasswords = passwordService.filterPasswords(
           passwords: event.passwords,
           term: event.term,
@@ -113,6 +124,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
       }
 
       emit((state as ManagerStatePasswordsPage).copyWith(
+        searchTerm: searchTerm,
         filteredPasswords: filteredPasswords,
       ));
     });
@@ -178,6 +190,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
           toastMessage:
               'Password ${event.id == null ? "created" : "updated"} successfully.',
           passwords: passwords,
+          searchTerm: searchTerm,
           filteredPasswords: filteredPasswords,
           exception: null,
         ));
@@ -202,6 +215,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
           showToast: true,
           toastMessage: 'Password deleted successfully.',
           passwords: passwords,
+          searchTerm: searchTerm,
           filteredPasswords: filteredPasswords,
           exception: null,
         ));

@@ -118,9 +118,10 @@ class HomePage extends StatelessWidget {
               builder: (context, managerState) {
                 switch (managerState.runtimeType) {
                   case ManagerStatePasswordsPage:
+                    managerState as ManagerStatePasswordsPage;
                     return PageWrapper(
                       title: managerState.title ?? 'My Passwords',
-                      body: const PasswordsPage(),
+                      body: PasswordsPage(searchTerm: managerState.searchTerm),
                       navbarIndex: managerState.navbarIndex ?? 0,
                     );
                   case ManagerStateGeneratorPage:

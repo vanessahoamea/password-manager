@@ -118,6 +118,12 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                 'The website and password fields can\'t be blank.',
               );
               break;
+            case PasswordExceptionInvalidKey:
+              showErrorDialog(
+                context,
+                'Something went wrong. Try again later.',
+              );
+              break;
             default:
               break;
           }
@@ -225,7 +231,6 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                               : null,
                           password: _passwordController.text,
                         ));
-                    _hasUnsavedChanges = false;
                   },
                 ),
                 if (widget.password != null)

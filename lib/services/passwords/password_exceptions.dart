@@ -9,3 +9,5 @@ class PasswordExceptionFailedToUpdate implements Exception {}
 class PasswordExceptionFailedToDelete implements Exception {}
 
 class PasswordExceptionEmptyFields implements Exception {}
+
+class PasswordExceptionInvalidKey implements Exception {}

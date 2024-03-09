@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:password_manager/services/passwords/password.dart';
+import 'package:password_manager/services/passwords/password_exceptions.dart';
 import 'package:password_manager/services/passwords/providers/database_provider.dart';
 import 'package:password_manager/services/passwords/providers/firestore_database_provider.dart';
 
@@ -67,10 +68,14 @@ class PasswordService {
     required List<int> encryptionKey,
     required IV iv,
   }) async {
-    final key = Key(Uint8List.fromList(encryptionKey));
-    final encrypter = Encrypter(AES(key));
+    try {
+      final key = Key(Uint8List.fromList(encryptionKey));
+      final encrypter = Encrypter(AES(key));
 
-    return encrypter.encrypt(plaintextPassword, iv: iv).base64;
+      return encrypter.encrypt(plaintextPassword, iv: iv).base64;
+    } on Exception catch (_) {
+      throw PasswordExceptionInvalidKey();
+    }
   }
 
   static Future<String> decrypt({
@@ -78,9 +83,13 @@ class PasswordService {
     required List<int> encryptionKey,
     required IV iv,
   }) async {
-    final key = Key(Uint8List.fromList(encryptionKey));
-    final encrypter = Encrypter(AES(key));
+    try {
+      final key = Key(Uint8List.fromList(encryptionKey));
+      final encrypter = Encrypter(AES(key));
 
-    return encrypter.decrypt(Encrypted.fromBase64(encryptedPassword), iv: iv);
+      return encrypter.decrypt(Encrypted.fromBase64(encryptedPassword), iv: iv);
+    } on Exception catch (_) {
+      throw PasswordExceptionInvalidKey();
+    }
   }
 }

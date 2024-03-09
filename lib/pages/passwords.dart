@@ -10,7 +10,9 @@ import 'package:password_manager/services/passwords/password_exceptions.dart';
 import 'package:password_manager/utils/dialogs/error_dialog.dart';
 
 class PasswordsPage extends StatefulWidget {
-  const PasswordsPage({super.key});
+  final String? searchTerm;
+
+  const PasswordsPage({super.key, required this.searchTerm});
 
   @override
   State<PasswordsPage> createState() => _PasswordsPageState();
@@ -18,6 +20,12 @@ class PasswordsPage extends StatefulWidget {
 
 class _PasswordsPageState extends State<PasswordsPage> {
   final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    _searchController.text = widget.searchTerm ?? '';
+    super.initState();
+  }
 
   @override
   dispose() {
@@ -30,11 +38,21 @@ class _PasswordsPageState extends State<PasswordsPage> {
     return BlocConsumer<ManagerBloc, ManagerState>(
       listener: (context, state) {
         if (state is ManagerStatePasswordsPage) {
-          if (state.exception is PasswordExceptionFailedToGetAll) {
-            showErrorDialog(
-              context,
-              'Failed to get passwords. Try again later.',
-            );
+          switch (state.exception.runtimeType) {
+            case PasswordExceptionFailedToGetAll:
+              showErrorDialog(
+                context,
+                'Failed to get passwords. Try again later.',
+              );
+              break;
+            case PasswordExceptionInvalidKey:
+              showErrorDialog(
+                context,
+                'Something went wrong. Try again later.',
+              );
+              break;
+            default:
+              break;
           }
         }
       },
