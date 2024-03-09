@@ -9,6 +9,7 @@ import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/bloc/theme/theme_cubit.dart';
 import 'package:password_manager/components/page_wrapper.dart';
 import 'package:password_manager/overlays/loading_screen.dart';
+import 'package:password_manager/overlays/toast.dart';
 import 'package:password_manager/pages/generator.dart';
 import 'package:password_manager/pages/login.dart';
 import 'package:password_manager/pages/passwords.dart';
@@ -112,7 +113,10 @@ class HomePage extends StatelessWidget {
 
                 // toast messages when the action is finished
                 if (managerState.showToast) {
-                  // TODO
+                  Toast.show(
+                    context: context,
+                    text: managerState.toastMessage,
+                  );
                 }
               },
               builder: (context, managerState) {

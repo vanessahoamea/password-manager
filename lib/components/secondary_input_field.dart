@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:password_manager/overlays/toast.dart';
 import 'package:password_manager/utils/theme_extensions/input_field_colors.dart';
 
 class SecondaryInputField extends StatefulWidget {
@@ -25,8 +26,10 @@ class SecondaryInputField extends StatefulWidget {
 }
 
 class _SecondaryInputFieldState extends State<SecondaryInputField> {
-  void _copyToClipboard() async {
-    await Clipboard.setData(ClipboardData(text: widget.controller.text));
+  void _copyToClipboard() {
+    Clipboard.setData(ClipboardData(text: widget.controller.text)).then((_) {
+      Toast.show(context: context, text: 'Copied value to clipboard.');
+    });
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/extensions/dark_mode.dart';
+import 'package:password_manager/utils/theme_extensions/global_colors.dart';
 
 class Navbar extends StatelessWidget {
   final int selectedIndex;
@@ -11,6 +12,8 @@ class Navbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalColors colors = Theme.of(context).extension<GlobalColors>()!;
+
     return NavigationBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       surfaceTintColor: Colors.grey,
@@ -37,7 +40,7 @@ class Navbar extends StatelessWidget {
           label: 'Settings',
         ),
       ],
-      indicatorColor: Colors.grey.withAlpha(100),
+      indicatorColor: colors.toastColor,
       selectedIndex: selectedIndex,
       onDestinationSelected: (int index) {
         if (index == 0) {

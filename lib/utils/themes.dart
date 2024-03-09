@@ -27,6 +27,7 @@ class AppTheme {
     extensions: const [
       GlobalColors(
         secondaryTextColor: lightSecondaryTextColor,
+        toastColor: lightToastColor,
         successColor: lightSuccessColor,
         errorColor: lightErrorColor,
       ),
@@ -62,6 +63,7 @@ class AppTheme {
     extensions: const [
       GlobalColors(
         secondaryTextColor: darkSecondaryTextColor,
+        toastColor: darkToastColor,
         successColor: darkSuccessColor,
         errorColor: darkErrorColor,
       ),
