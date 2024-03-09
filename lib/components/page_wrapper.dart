@@ -45,20 +45,22 @@ class PageWrapper extends StatelessWidget {
       ),
       body: body,
       bottomNavigationBar: Navbar(selectedIndex: navbarIndex),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context
-              .read<ManagerBloc>()
-              .add(const ManagerEventGoToSinglePassword(password: null));
-        },
-        shape: const CircleBorder(),
-        tooltip: 'Add password',
-        elevation: context.isDarkMode ? 0 : 6,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
+      floatingActionButton: navbarIndex == 0
+          ? FloatingActionButton(
+              onPressed: () {
+                context
+                    .read<ManagerBloc>()
+                    .add(const ManagerEventGoToSinglePassword(password: null));
+              },
+              shape: const CircleBorder(),
+              tooltip: 'Add password',
+              elevation: context.isDarkMode ? 0 : 6,
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            )
+          : null,
     );
   }
 }

@@ -98,7 +98,22 @@ class HomePage extends StatelessWidget {
 
             return BlocConsumer<ManagerBloc, ManagerState>(
               listener: (context, managerState) {
-                //
+                // loading screen when performing an action on a password
+                if (managerState is ManagerStateSinglePasswordPage &&
+                    managerState.isLoading) {
+                  Future.delayed(const Duration(seconds: 5));
+                  LoadingScreen.show(
+                    context: context,
+                    text: managerState.loadingMessage,
+                  );
+                } else {
+                  LoadingScreen.hide();
+                }
+
+                // toast messages when the action is finished
+                if (managerState.showToast) {
+                  // TODO
+                }
               },
               builder: (context, managerState) {
                 switch (managerState.runtimeType) {

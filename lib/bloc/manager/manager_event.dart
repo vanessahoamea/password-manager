@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/services/auth/app_user.dart';
 import 'package:password_manager/services/passwords/password.dart';
 
@@ -44,12 +43,6 @@ class ManagerEventFilterPasswords extends ManagerEvent {
 
 class ManagerEventToggleBiometrics extends ManagerEvent {
   const ManagerEventToggleBiometrics();
-}
-
-class ManagerEventReturnToPreviousState extends ManagerEvent {
-  final ManagerState previousState;
-
-  const ManagerEventReturnToPreviousState({required this.previousState});
 }
 
 class ManagerEventUpdateSinglePasswordState extends ManagerEvent {

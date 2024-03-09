@@ -28,6 +28,10 @@ class FirestoreDatabaseProvider extends DatabaseProvider {
 
   @override
   Future<void> createPassword({required Password password}) async {
+    if (password.website.isEmpty || password.encryptedPassword.isEmpty) {
+      throw PasswordExceptionEmptyFields();
+    }
+
     try {
       await passwords.add(password.toMap());
     } catch (_) {
@@ -47,6 +51,10 @@ class FirestoreDatabaseProvider extends DatabaseProvider {
 
   @override
   Future<void> updatePassword({required Password password}) async {
+    if (password.website.isEmpty || password.encryptedPassword.isEmpty) {
+      throw PasswordExceptionEmptyFields();
+    }
+
     try {
       await passwords.doc(password.id).update(password.toMap());
     } catch (_) {

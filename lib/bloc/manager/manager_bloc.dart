@@ -37,6 +37,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
 
         emit(ManagerStatePasswordsPage(
           user: user,
+          showToast: false,
           passwords: passwords,
           filteredPasswords: null,
           exception: null,
@@ -48,6 +49,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
 
         emit(ManagerStatePasswordsPage(
           user: user,
+          showToast: false,
           passwords: passwords,
           filteredPasswords: null,
           exception: e,
@@ -58,6 +60,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
     on<ManagerEventGoToPasswordsPage>((event, emit) {
       emit(ManagerStatePasswordsPage(
         user: user,
+        showToast: false,
         passwords: passwords,
         filteredPasswords: filteredPasswords,
         exception: null,
@@ -90,9 +93,9 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
 
       emit(ManagerStateSinglePasswordPage(
         user: user,
+        showToast: false,
         password: event.password,
         decryptedPassword: decryptedPassword,
-        previousState: state,
         showPassword: false,
         isLoading: false,
         exception: null,
@@ -123,10 +126,6 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
       ));
     });
 
-    on<ManagerEventReturnToPreviousState>((event, emit) {
-      emit(event.previousState);
-    });
-
     on<ManagerEventUpdateSinglePasswordState>((event, emit) {
       emit((state as ManagerStateSinglePasswordPage).copyWith(
         showPassword: event.showPassword,
@@ -134,16 +133,22 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
     });
 
     on<ManagerEventSavePassword>((event, emit) async {
-      emit((state as ManagerStateSinglePasswordPage).copyWith(isLoading: true));
+      emit((state as ManagerStateSinglePasswordPage).copyWith(
+        isLoading: true,
+        loadingMessage:
+            '${event.id == null ? "Adding" : "Updating"} password...',
+      ));
 
       try {
         final [encryptionKey, iv] =
             await localStorageService.getEncryptionKey();
-        final encryptedPassword = await PasswordService.encrypt(
-          plaintextPassword: event.password,
-          encryptionKey: encryptionKey,
-          iv: iv,
-        );
+        final encryptedPassword = event.password.isNotEmpty
+            ? await PasswordService.encrypt(
+                plaintextPassword: event.password,
+                encryptionKey: encryptionKey,
+                iv: iv,
+              )
+            : event.password;
 
         // create new password
         if (event.id == null) {
@@ -167,8 +172,14 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
           await passwordService.updatePassword(password: password);
         }
 
-        emit((state as ManagerStateSinglePasswordPage).copyWith(
-          isLoading: false,
+        emit(ManagerStatePasswordsPage(
+          user: null,
+          showToast: true,
+          toastMessage:
+              'Password ${event.id == null ? "created" : "updated"} successfully.',
+          passwords: passwords,
+          filteredPasswords: filteredPasswords,
+          exception: null,
         ));
       } on Exception catch (e) {
         emit((state as ManagerStateSinglePasswordPage).copyWith(
@@ -179,12 +190,20 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
     });
 
     on<ManagerEventDeletePassword>((event, emit) async {
-      emit((state as ManagerStateSinglePasswordPage).copyWith(isLoading: true));
+      emit((state as ManagerStateSinglePasswordPage).copyWith(
+        isLoading: true,
+        loadingMessage: 'Deleting password...',
+      ));
 
       try {
         await passwordService.deletePassword(passwordId: event.passwordId);
-        emit((state as ManagerStateSinglePasswordPage).copyWith(
-          isLoading: false,
+        emit(ManagerStatePasswordsPage(
+          user: null,
+          showToast: true,
+          toastMessage: 'Password deleted successfully.',
+          passwords: passwords,
+          filteredPasswords: filteredPasswords,
+          exception: null,
         ));
       } on Exception catch (e) {
         emit((state as ManagerStateSinglePasswordPage).copyWith(

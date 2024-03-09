@@ -7,8 +7,16 @@ abstract class ManagerState {
   final AppUser? user;
   final String? title;
   final int? navbarIndex;
+  final bool showToast;
+  final String toastMessage;
 
-  const ManagerState({required this.user, this.title, this.navbarIndex});
+  const ManagerState({
+    required this.user,
+    this.title,
+    this.navbarIndex,
+    this.showToast = false,
+    this.toastMessage = 'Changes saved successfully.',
+  });
 }
 
 class ManagerStateUninitialized extends ManagerState {
@@ -22,6 +30,8 @@ class ManagerStatePasswordsPage extends ManagerState {
 
   const ManagerStatePasswordsPage({
     required super.user,
+    required super.showToast,
+    super.toastMessage,
     required this.passwords,
     required this.filteredPasswords,
     required this.exception,
@@ -29,12 +39,16 @@ class ManagerStatePasswordsPage extends ManagerState {
 
   ManagerStatePasswordsPage copyWith({
     AppUser? user,
+    bool? showToast,
+    String? toastMessage,
     Stream<Iterable<Password>>? passwords,
     Iterable<Password>? filteredPasswords,
     Exception? exception,
   }) {
     return ManagerStatePasswordsPage(
       user: user ?? this.user,
+      showToast: showToast ?? this.showToast,
+      toastMessage: toastMessage ?? this.toastMessage,
       passwords: passwords ?? this.passwords,
       filteredPasswords: filteredPasswords,
       exception: exception,
@@ -73,37 +87,43 @@ class ManagerStateSettingsPage extends ManagerState {
 class ManagerStateSinglePasswordPage extends ManagerState {
   final Password? password;
   final String decryptedPassword;
-  final ManagerState previousState;
   final bool showPassword;
   final bool isLoading;
+  final String loadingMessage;
   final Exception? exception;
 
   const ManagerStateSinglePasswordPage({
     required super.user,
+    required super.showToast,
+    super.toastMessage,
     required this.password,
     required this.decryptedPassword,
-    required this.previousState,
     required this.showPassword,
     required this.isLoading,
+    this.loadingMessage = 'Saving changes...',
     required this.exception,
   });
 
   ManagerStateSinglePasswordPage copyWith({
     AppUser? user,
+    bool? showToast,
+    String? toastMessage,
     Password? password,
     String? decryptedPassword,
-    ManagerState? previousState,
     bool? showPassword,
     bool? isLoading,
+    String? loadingMessage,
     Exception? exception,
   }) {
     return ManagerStateSinglePasswordPage(
       user: user ?? this.user,
+      showToast: showToast ?? this.showToast,
+      toastMessage: toastMessage ?? this.toastMessage,
       password: password ?? this.password,
       decryptedPassword: decryptedPassword ?? this.decryptedPassword,
-      previousState: previousState ?? this.previousState,
       showPassword: showPassword ?? this.showPassword,
       isLoading: isLoading ?? this.isLoading,
+      loadingMessage: loadingMessage ?? this.loadingMessage,
       exception: exception,
     );
   }

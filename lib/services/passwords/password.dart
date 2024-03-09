@@ -28,8 +28,8 @@ class Password {
     );
   }
 
-  Map<String, String?> toMap() {
-    Map<String, String> map = {
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = {
       'userId': userId,
       'website': website,
       'encryptedPassword': encryptedPassword,
@@ -41,6 +41,10 @@ class Password {
 
     if (username != null) {
       map['username'] = username!;
+    }
+
+    if (id != null && username == null) {
+      map['username'] = FieldValue.delete();
     }
 
     return map;

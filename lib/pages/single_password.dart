@@ -7,7 +7,6 @@ import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/components/primary_button.dart';
 import 'package:password_manager/components/secondary_button.dart';
 import 'package:password_manager/components/secondary_input_field.dart';
-import 'package:password_manager/overlays/loading_screen.dart';
 import 'package:password_manager/services/passwords/password.dart';
 import 'package:password_manager/services/passwords/password_exceptions.dart';
 import 'package:password_manager/utils/dialogs/confirmation_dialog.dart';
@@ -94,15 +93,6 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
     return BlocConsumer<ManagerBloc, ManagerState>(
       listener: (context, state) {
         if (state is ManagerStateSinglePasswordPage) {
-          if (state.isLoading) {
-            LoadingScreen.show(
-              context: context,
-              text: 'Saving changes...',
-            );
-          } else {
-            LoadingScreen.hide();
-          }
-
           switch (state.exception.runtimeType) {
             case PasswordExceptionFailedToCreate:
               showErrorDialog(
@@ -122,6 +112,12 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                 'Password couldn\'t be deleted. Try again later.',
               );
               break;
+            case PasswordExceptionEmptyFields:
+              showErrorDialog(
+                context,
+                'The website and password fields can\'t be blank.',
+              );
+              break;
             default:
               break;
           }
@@ -137,9 +133,7 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                 if (!_hasUnsavedChanges) {
                   context
                       .read<ManagerBloc>()
-                      .add(ManagerEventReturnToPreviousState(
-                        previousState: state.previousState,
-                      ));
+                      .add(const ManagerEventGoToPasswordsPage());
                 } else {
                   showConfirmationDialog(
                     context,
@@ -149,9 +143,7 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                     if (value) {
                       context
                           .read<ManagerBloc>()
-                          .add(ManagerEventReturnToPreviousState(
-                            previousState: state.previousState,
-                          ));
+                          .add(const ManagerEventGoToPasswordsPage());
                     }
                   });
                 }

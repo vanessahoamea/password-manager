@@ -7,3 +7,5 @@ class PasswordExceptionFailedToGetOne implements Exception {}
 class PasswordExceptionFailedToUpdate implements Exception {}
 
 class PasswordExceptionFailedToDelete implements Exception {}
+
+class PasswordExceptionEmptyFields implements Exception {}
