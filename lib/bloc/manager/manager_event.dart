@@ -41,6 +41,10 @@ class ManagerEventFilterPasswords extends ManagerEvent {
   });
 }
 
+class ManagerEventUpdateGeneratorState extends ManagerEvent {
+  const ManagerEventUpdateGeneratorState();
+}
+
 class ManagerEventToggleBiometrics extends ManagerEvent {
   const ManagerEventToggleBiometrics();
 }

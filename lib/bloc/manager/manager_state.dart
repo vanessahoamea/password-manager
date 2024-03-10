@@ -61,8 +61,42 @@ class ManagerStatePasswordsPage extends ManagerState {
 }
 
 class ManagerStateGeneratorPage extends ManagerState {
-  const ManagerStateGeneratorPage({required super.user})
-      : super(title: 'Generate Password', navbarIndex: 1);
+  final String password;
+  final int length;
+  final bool includeLowercase;
+  final bool includeUppercase;
+  final bool includeNumbers;
+  final bool includeSpecial;
+
+  const ManagerStateGeneratorPage({
+    required super.user,
+    required this.password,
+    required this.length,
+    required this.includeLowercase,
+    required this.includeUppercase,
+    required this.includeNumbers,
+    required this.includeSpecial,
+  }) : super(title: 'Generate Password', navbarIndex: 1);
+
+  ManagerStateGeneratorPage copyWith({
+    AppUser? user,
+    String? password,
+    int? length,
+    bool? includeLowercase,
+    bool? includeUppercase,
+    bool? includeNumbers,
+    bool? includeSpecial,
+  }) {
+    return ManagerStateGeneratorPage(
+      user: user ?? this.user,
+      password: password ?? this.password,
+      length: length ?? this.length,
+      includeLowercase: includeLowercase ?? this.includeLowercase,
+      includeUppercase: includeUppercase ?? this.includeUppercase,
+      includeNumbers: includeNumbers ?? this.includeNumbers,
+      includeSpecial: includeSpecial ?? this.includeSpecial,
+    );
+  }
 }
 
 class ManagerStateSettingsPage extends ManagerState {

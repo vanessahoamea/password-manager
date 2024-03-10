@@ -72,7 +72,23 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
     });
 
     on<ManagerEventGoToGeneratorPage>((event, emit) {
-      emit(ManagerStateGeneratorPage(user: user));
+      final generatedPassword = PasswordService.generatePassword(
+        length: 16,
+        includeLowercase: true,
+        includeUppercase: true,
+        includeNumbers: true,
+        includeSpecial: true,
+      );
+
+      emit(ManagerStateGeneratorPage(
+        user: user,
+        password: generatedPassword,
+        length: 16,
+        includeLowercase: true,
+        includeUppercase: true,
+        includeNumbers: true,
+        includeSpecial: true,
+      ));
     });
 
     on<ManagerEventGoToSettingsPage>((event, emit) {
@@ -127,6 +143,10 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
         searchTerm: searchTerm,
         filteredPasswords: filteredPasswords,
       ));
+    });
+
+    on<ManagerEventUpdateGeneratorState>((event, emit) {
+      //
     });
 
     on<ManagerEventToggleBiometrics>((event, emit) async {

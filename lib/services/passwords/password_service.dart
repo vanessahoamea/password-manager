@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
@@ -43,6 +44,37 @@ class PasswordService {
         password.website.toLowerCase().contains(term.toLowerCase()) ||
         (password.username != null &&
             password.username!.toLowerCase().contains(term.toLowerCase())));
+  }
+
+  static String generatePassword({
+    required int length,
+    required bool includeLowercase,
+    required bool includeUppercase,
+    required bool includeNumbers,
+    required bool includeSpecial,
+  }) {
+    List<int> codes = [];
+    StringBuffer result = StringBuffer();
+
+    if (includeLowercase) {
+      codes.addAll(Iterable.generate(26, (i) => 97 + i));
+    }
+    if (includeUppercase) {
+      codes.addAll(Iterable.generate(26, (i) => 65 + i));
+    }
+    if (includeNumbers) {
+      codes.addAll(Iterable.generate(10, (i) => 48 + i));
+    }
+    if (includeSpecial) {
+      codes.addAll([33, 35, 36, 37, 38, 42, 64, 94]);
+    }
+
+    for (int i = 0; i < length; i++) {
+      int index = Random().nextInt(codes.length);
+      result.writeCharCode(codes[index]);
+    }
+
+    return result.toString();
   }
 
   static Future<List<dynamic>> generateKey({
