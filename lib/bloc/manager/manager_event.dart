@@ -42,7 +42,19 @@ class ManagerEventFilterPasswords extends ManagerEvent {
 }
 
 class ManagerEventUpdateGeneratorState extends ManagerEvent {
-  const ManagerEventUpdateGeneratorState();
+  final int? length;
+  final bool? includeLowercase;
+  final bool? includeUppercase;
+  final bool? includeNumbers;
+  final bool? includeSpecial;
+
+  const ManagerEventUpdateGeneratorState({
+    this.length,
+    this.includeLowercase,
+    this.includeUppercase,
+    this.includeNumbers,
+    this.includeSpecial,
+  });
 }
 
 class ManagerEventToggleBiometrics extends ManagerEvent {

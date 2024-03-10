@@ -146,7 +146,39 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
     });
 
     on<ManagerEventUpdateGeneratorState>((event, emit) {
-      //
+      int length = event.length ?? (state as ManagerStateGeneratorPage).length;
+      bool includeLowercase = event.includeLowercase ??
+          (state as ManagerStateGeneratorPage).includeLowercase;
+      bool includeUppercase = event.includeUppercase ??
+          (state as ManagerStateGeneratorPage).includeUppercase;
+      bool includeNumbers = event.includeNumbers ??
+          (state as ManagerStateGeneratorPage).includeNumbers;
+      bool includeSpecial = event.includeSpecial ??
+          (state as ManagerStateGeneratorPage).includeSpecial;
+
+      if (!includeLowercase &&
+          !includeUppercase &&
+          !includeNumbers &&
+          !includeSpecial) {
+        includeLowercase = true;
+      }
+
+      final generatedPassword = PasswordService.generatePassword(
+        length: length,
+        includeLowercase: includeLowercase,
+        includeUppercase: includeUppercase,
+        includeNumbers: includeNumbers,
+        includeSpecial: includeSpecial,
+      );
+
+      emit((state as ManagerStateGeneratorPage).copyWith(
+        password: generatedPassword,
+        length: length,
+        includeLowercase: includeLowercase,
+        includeUppercase: includeUppercase,
+        includeNumbers: includeNumbers,
+        includeSpecial: includeSpecial,
+      ));
     });
 
     on<ManagerEventToggleBiometrics>((event, emit) async {

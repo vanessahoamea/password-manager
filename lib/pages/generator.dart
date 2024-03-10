@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_bloc.dart';
+import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
 import 'package:password_manager/components/password_container.dart';
 import 'package:password_manager/components/password_option.dart';
@@ -15,6 +16,23 @@ class GeneratorPage extends StatelessWidget {
     Clipboard.setData(ClipboardData(text: text)).then((_) {
       Toast.show(context: context, text: 'Copied password to clipboard.');
     });
+  }
+
+  void _generatePassword(
+    BuildContext context, {
+    int? length,
+    bool? includeLowercase,
+    bool? includeUppercase,
+    bool? includeNumbers,
+    bool? includeSpecial,
+  }) {
+    context.read<ManagerBloc>().add(ManagerEventUpdateGeneratorState(
+          length: length,
+          includeLowercase: includeLowercase,
+          includeUppercase: includeUppercase,
+          includeNumbers: includeNumbers,
+          includeSpecial: includeSpecial,
+        ));
   }
 
   @override
@@ -37,18 +55,14 @@ class GeneratorPage extends StatelessWidget {
                   Expanded(
                     child: PrimaryButton(
                       text: 'Copy',
-                      onTap: () {
-                        _copyToClipboard(context, state.password);
-                      },
+                      onTap: () => _copyToClipboard(context, state.password),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: PrimaryButton(
                       text: 'Generate',
-                      onTap: () {
-                        //
-                      },
+                      onTap: () => _generatePassword(context),
                     ),
                   ),
                 ],
@@ -64,9 +78,8 @@ class GeneratorPage extends StatelessWidget {
                       min: 8,
                       max: 64,
                       value: state.length.toDouble(),
-                      onChanged: (value) {
-                        //
-                      },
+                      onChanged: (value) =>
+                          _generatePassword(context, length: value.toInt()),
                     ),
                   ),
                   Text(
@@ -80,9 +93,8 @@ class GeneratorPage extends StatelessWidget {
                 widgets: [
                   Switch(
                     value: state.includeLowercase,
-                    onChanged: (value) {
-                      //
-                    },
+                    onChanged: (value) =>
+                        _generatePassword(context, includeLowercase: value),
                   ),
                 ],
               ),
@@ -91,9 +103,8 @@ class GeneratorPage extends StatelessWidget {
                 widgets: [
                   Switch(
                     value: state.includeUppercase,
-                    onChanged: (value) {
-                      //
-                    },
+                    onChanged: (value) =>
+                        _generatePassword(context, includeUppercase: value),
                   ),
                 ],
               ),
@@ -102,9 +113,8 @@ class GeneratorPage extends StatelessWidget {
                 widgets: [
                   Switch(
                     value: state.includeNumbers,
-                    onChanged: (value) {
-                      //
-                    },
+                    onChanged: (value) =>
+                        _generatePassword(context, includeNumbers: value),
                   ),
                 ],
               ),
@@ -113,9 +123,8 @@ class GeneratorPage extends StatelessWidget {
                 widgets: [
                   Switch(
                     value: state.includeSpecial,
-                    onChanged: (value) {
-                      //
-                    },
+                    onChanged: (value) =>
+                        _generatePassword(context, includeSpecial: value),
                   ),
                 ],
               ),

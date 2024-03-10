@@ -24,6 +24,7 @@ class AppTheme {
     checkboxTheme: const CheckboxThemeData(
       side: BorderSide(color: lightInputFieldTextColor, width: 2.0),
     ),
+    sliderTheme: const SliderThemeData(inactiveTrackColor: lightToastColor),
     extensions: const [
       GlobalColors(
         secondaryTextColor: lightSecondaryTextColor,
@@ -57,6 +58,7 @@ class AppTheme {
       side: const BorderSide(color: darkInputFieldTextColor, width: 2.0),
       checkColor: MaterialStateColor.resolveWith((_) => Colors.white),
     ),
+    sliderTheme: const SliderThemeData(inactiveTrackColor: darkToastColor),
     switchTheme: SwitchThemeData(
       thumbColor: MaterialStateColor.resolveWith((_) => Colors.white),
     ),

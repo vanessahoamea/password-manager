@@ -43,6 +43,8 @@ class Navbar extends StatelessWidget {
       indicatorColor: colors.toastColor,
       selectedIndex: selectedIndex,
       onDestinationSelected: (int index) {
+        if (index == selectedIndex) return;
+
         if (index == 0) {
           context
               .read<ManagerBloc>()
