@@ -17,20 +17,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     BiometricsService biometricsService,
   ) : super(const AuthStateUninitialized(isLoading: false)) {
     on<AuthEventInitialize>((event, emit) async {
-      await authService.initialize();
+      await Future.wait([
+        authService.initialize(),
+        localStorageService.initialize(),
+      ]);
 
       final [
         rememberUser as bool,
         credentials as Map<String, String>,
-        hasBiometricsEnabled as bool
       ] = await Future.wait([
         localStorageService.getRememberUser(),
-        localStorageService.getCredentials(),
-        localStorageService.getHasBiometricsEnabled()
+        localStorageService.getCredentials()
       ]);
       this.rememberUser = rememberUser;
       this.credentials = credentials;
-      this.hasBiometricsEnabled = hasBiometricsEnabled;
+      hasBiometricsEnabled = localStorageService.getHasBiometricsEnabled();
 
       try {
         emit(AuthStateLoggedIn(isLoading: false, user: authService.user));
@@ -241,9 +242,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       try {
+        hasBiometricsEnabled = localStorageService.getHasBiometricsEnabled();
         await authService.logOut();
-        hasBiometricsEnabled =
-            await localStorageService.getHasBiometricsEnabled();
 
         switch (state.runtimeType) {
           case AuthStateVerifyEmail:

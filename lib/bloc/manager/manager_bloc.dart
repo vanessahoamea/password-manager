@@ -12,6 +12,7 @@ import 'package:password_manager/services/passwords/password_service.dart';
 class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
   late AppUser user;
   late Stream<Iterable<Password>> passwords;
+  late Map<String, dynamic> passwordSettings;
   late bool supportsBiometrics;
   late bool hasBiometricsEnabled;
   String? searchTerm;
@@ -27,11 +28,11 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
 
       try {
         passwords = passwordService.allPasswords(userId: user.id);
+        passwordSettings = localStorageService.getPasswordSettings();
         supportsBiometrics = await biometricsService.supportsBiometrics();
 
         if (supportsBiometrics) {
-          hasBiometricsEnabled =
-              await localStorageService.getHasBiometricsEnabled();
+          hasBiometricsEnabled = localStorageService.getHasBiometricsEnabled();
         } else {
           hasBiometricsEnabled = false;
         }
@@ -73,21 +74,21 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
 
     on<ManagerEventGoToGeneratorPage>((event, emit) {
       final generatedPassword = PasswordService.generatePassword(
-        length: 16,
-        includeLowercase: true,
-        includeUppercase: true,
-        includeNumbers: true,
-        includeSpecial: true,
+        length: passwordSettings['length'],
+        includeLowercase: passwordSettings['includeLowercase'],
+        includeUppercase: passwordSettings['includeUppercase'],
+        includeNumbers: passwordSettings['includeNumbers'],
+        includeSpecial: passwordSettings['includeSpecial'],
       );
 
       emit(ManagerStateGeneratorPage(
         user: user,
         password: generatedPassword,
-        length: 16,
-        includeLowercase: true,
-        includeUppercase: true,
-        includeNumbers: true,
-        includeSpecial: true,
+        length: passwordSettings['length'],
+        includeLowercase: passwordSettings['includeLowercase'],
+        includeUppercase: passwordSettings['includeUppercase'],
+        includeNumbers: passwordSettings['includeNumbers'],
+        includeSpecial: passwordSettings['includeSpecial'],
       ));
     });
 
@@ -145,16 +146,16 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
       ));
     });
 
-    on<ManagerEventUpdateGeneratorState>((event, emit) {
-      int length = event.length ?? (state as ManagerStateGeneratorPage).length;
-      bool includeLowercase = event.includeLowercase ??
-          (state as ManagerStateGeneratorPage).includeLowercase;
-      bool includeUppercase = event.includeUppercase ??
-          (state as ManagerStateGeneratorPage).includeUppercase;
-      bool includeNumbers = event.includeNumbers ??
-          (state as ManagerStateGeneratorPage).includeNumbers;
-      bool includeSpecial = event.includeSpecial ??
-          (state as ManagerStateGeneratorPage).includeSpecial;
+    on<ManagerEventUpdateGeneratorState>((event, emit) async {
+      int length = event.length ?? passwordSettings['length'];
+      bool includeLowercase =
+          event.includeLowercase ?? passwordSettings['includeLowercase'];
+      bool includeUppercase =
+          event.includeUppercase ?? passwordSettings['includeUppercase'];
+      bool includeNumbers =
+          event.includeNumbers ?? passwordSettings['includeNumbers'];
+      bool includeSpecial =
+          event.includeSpecial ?? passwordSettings['includeSpecial'];
 
       if (!includeLowercase &&
           !includeUppercase &&
@@ -162,6 +163,13 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
           !includeSpecial) {
         includeLowercase = true;
       }
+
+      passwordSettings['length'] = length;
+      passwordSettings['includeLowercase'] = includeLowercase;
+      passwordSettings['includeUppercase'] = includeUppercase;
+      passwordSettings['includeNumbers'] = includeNumbers;
+      passwordSettings['includeSpecial'] = includeSpecial;
+      await localStorageService.setPasswordSettings(passwordSettings);
 
       final generatedPassword = PasswordService.generatePassword(
         length: length,

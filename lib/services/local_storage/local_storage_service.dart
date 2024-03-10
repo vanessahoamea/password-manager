@@ -5,14 +5,21 @@ import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:password_manager/services/passwords/password_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
   static final LocalStorageService _instance = LocalStorageService._internal();
-  final FlutterSecureStorage storage = const FlutterSecureStorage();
+  late final FlutterSecureStorage storage;
+  late final SharedPreferences preferences;
 
   factory LocalStorageService() => _instance;
 
   LocalStorageService._internal();
+
+  Future<void> initialize() async {
+    storage = const FlutterSecureStorage();
+    preferences = await SharedPreferences.getInstance();
+  }
 
   Future<bool> getRememberUser() async {
     String value = await storage.read(key: 'remember_user') ?? 'false';
@@ -76,8 +83,25 @@ class LocalStorageService {
     ]);
   }
 
-  Future<ThemeMode> getThemeMode() async {
-    String theme = await storage.read(key: 'theme') ?? 'system';
+  Map<String, dynamic> getPasswordSettings() {
+    String encodedMap = preferences.getString('password_settings') ?? '{}';
+    Map<String, dynamic> map = jsonDecode(encodedMap);
+
+    map['length'] = map['length'] ?? 16;
+    map['includeLowercase'] = map['includeLowercase'] ?? true;
+    map['includeUppercase'] = map['includeUppercase'] ?? true;
+    map['includeNumbers'] = map['includeNumbers'] ?? true;
+    map['includeSpecial'] = map['includeSpecial'] ?? true;
+
+    return map;
+  }
+
+  Future<void> setPasswordSettings(Map<String, dynamic> map) async {
+    await preferences.setString('password_settings', jsonEncode(map));
+  }
+
+  ThemeMode getThemeMode() {
+    String theme = preferences.getString('theme') ?? 'system';
     if (theme == 'light') {
       return ThemeMode.light;
     } else if (theme == 'dark') {
@@ -88,18 +112,15 @@ class LocalStorageService {
   }
 
   Future<void> setThemeMode(ThemeMode themeMode) async {
-    await storage.write(key: 'theme', value: themeMode.name);
+    await preferences.setString('theme', themeMode.name);
   }
 
-  Future<bool> getHasBiometricsEnabled() async {
-    String value = await storage.read(key: 'has_biometrics_enabled') ?? 'false';
-    return value == 'true';
+  bool getHasBiometricsEnabled() {
+    bool value = preferences.getBool('has_biometrics_enabled') ?? false;
+    return value;
   }
 
   Future<void> toggleBiometrics(bool hasBiometricsEnabled) async {
-    await storage.write(
-      key: 'has_biometrics_enabled',
-      value: hasBiometricsEnabled.toString(),
-    );
+    await preferences.setBool('has_biometrics_enabled', hasBiometricsEnabled);
   }
 }
