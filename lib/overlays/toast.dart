@@ -20,7 +20,7 @@ class Toast {
           bottom: 100.0,
           child: GestureDetector(
             child: Material(
-              color: colors.toastColor,
+              color: colors.accentColor,
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 padding: const EdgeInsets.symmetric(

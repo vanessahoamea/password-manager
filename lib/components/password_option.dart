@@ -13,7 +13,7 @@ class PasswordOption extends StatelessWidget {
 
     return Column(
       children: [
-        Divider(height: 0, color: colors.toastColor),
+        Divider(height: 0, color: colors.accentColor),
         Padding(
           padding: const EdgeInsets.all(5.0),
           child: Row(
@@ -24,7 +24,7 @@ class PasswordOption extends StatelessWidget {
             ],
           ),
         ),
-        Divider(height: 0, color: colors.toastColor),
+        Divider(height: 0, color: colors.accentColor),
       ],
     );
   }

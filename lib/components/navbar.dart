@@ -40,7 +40,7 @@ class Navbar extends StatelessWidget {
           label: 'Settings',
         ),
       ],
-      indicatorColor: colors.toastColor,
+      indicatorColor: colors.accentColor,
       selectedIndex: selectedIndex,
       onDestinationSelected: (int index) {
         if (index == selectedIndex) return;

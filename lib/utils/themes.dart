@@ -24,11 +24,23 @@ class AppTheme {
     checkboxTheme: const CheckboxThemeData(
       side: BorderSide(color: lightInputFieldTextColor, width: 2.0),
     ),
-    sliderTheme: const SliderThemeData(inactiveTrackColor: lightToastColor),
+    sliderTheme: const SliderThemeData(inactiveTrackColor: lightAccentColor),
+    switchTheme: SwitchThemeData(
+      thumbColor: MaterialStateColor.resolveWith((_) => Colors.white),
+      trackColor: MaterialStateColor.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return primaryColor;
+        }
+        return lightAccentColor;
+      }),
+      trackOutlineColor:
+          MaterialStateColor.resolveWith((_) => Colors.transparent),
+      trackOutlineWidth: const MaterialStatePropertyAll(0.0),
+    ),
     extensions: const [
       GlobalColors(
         secondaryTextColor: lightSecondaryTextColor,
-        toastColor: lightToastColor,
+        accentColor: lightAccentColor,
         successColor: lightSuccessColor,
         errorColor: lightErrorColor,
       ),
@@ -58,14 +70,23 @@ class AppTheme {
       side: const BorderSide(color: darkInputFieldTextColor, width: 2.0),
       checkColor: MaterialStateColor.resolveWith((_) => Colors.white),
     ),
-    sliderTheme: const SliderThemeData(inactiveTrackColor: darkToastColor),
+    sliderTheme: const SliderThemeData(inactiveTrackColor: darkAccentColor),
     switchTheme: SwitchThemeData(
       thumbColor: MaterialStateColor.resolveWith((_) => Colors.white),
+      trackColor: MaterialStateColor.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return primaryColor;
+        }
+        return darkAccentColor;
+      }),
+      trackOutlineColor:
+          MaterialStateColor.resolveWith((_) => Colors.transparent),
+      trackOutlineWidth: const MaterialStatePropertyAll(0.0),
     ),
     extensions: const [
       GlobalColors(
         secondaryTextColor: darkSecondaryTextColor,
-        toastColor: darkToastColor,
+        accentColor: darkAccentColor,
         successColor: darkSuccessColor,
         errorColor: darkErrorColor,
       ),

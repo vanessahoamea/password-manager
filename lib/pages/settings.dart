@@ -46,7 +46,7 @@ class SettingsPage extends StatelessWidget {
             );
           },
         ),
-        Divider(height: 0, color: colors.toastColor),
+        Divider(height: 0, color: colors.accentColor),
 
         BlocBuilder<ManagerBloc, ManagerState>(
           builder: (context, managerState) {
@@ -85,7 +85,7 @@ class SettingsPage extends StatelessWidget {
                             ),
                             Divider(
                               height: 0,
-                              color: colors.toastColor,
+                              color: colors.accentColor,
                             ),
                           ],
                         );
@@ -123,7 +123,7 @@ class SettingsPage extends StatelessWidget {
             }
           },
         ),
-        Divider(height: 0, color: colors.toastColor),
+        Divider(height: 0, color: colors.accentColor),
       ],
     );
   }

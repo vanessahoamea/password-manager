@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 @immutable
 class GlobalColors extends ThemeExtension<GlobalColors> {
   final Color secondaryTextColor;
-  final Color toastColor;
+  final Color accentColor;
   final Color successColor;
   final Color errorColor;
 
   const GlobalColors({
     required this.secondaryTextColor,
-    required this.toastColor,
+    required this.accentColor,
     required this.successColor,
     required this.errorColor,
   });
@@ -17,13 +17,13 @@ class GlobalColors extends ThemeExtension<GlobalColors> {
   @override
   ThemeExtension<GlobalColors> copyWith({
     Color? secondaryTextColor,
-    Color? toastColor,
+    Color? accentColor,
     Color? successColor,
     Color? errorColor,
   }) {
     return GlobalColors(
       secondaryTextColor: secondaryTextColor ?? this.secondaryTextColor,
-      toastColor: toastColor ?? this.toastColor,
+      accentColor: accentColor ?? this.accentColor,
       successColor: successColor ?? this.successColor,
       errorColor: errorColor ?? this.errorColor,
     );
@@ -39,7 +39,7 @@ class GlobalColors extends ThemeExtension<GlobalColors> {
       secondaryTextColor:
           Color.lerp(secondaryTextColor, other.secondaryTextColor, t) ??
               secondaryTextColor,
-      toastColor: Color.lerp(toastColor, other.toastColor, t) ?? toastColor,
+      accentColor: Color.lerp(accentColor, other.accentColor, t) ?? accentColor,
       successColor:
           Color.lerp(successColor, other.successColor, t) ?? successColor,
       errorColor: Color.lerp(errorColor, other.errorColor, t) ?? errorColor,
