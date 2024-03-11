@@ -17,10 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     BiometricsService biometricsService,
   ) : super(const AuthStateUninitialized(isLoading: false)) {
     on<AuthEventInitialize>((event, emit) async {
-      await Future.wait([
-        authService.initialize(),
-        localStorageService.initialize(),
-      ]);
+      await authService.initialize();
 
       final [
         rememberUser as bool,

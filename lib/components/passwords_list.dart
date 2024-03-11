@@ -14,6 +14,14 @@ class PasswordsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalColors colors = Theme.of(context).extension<GlobalColors>()!;
 
+    String trimText(String text, int length) {
+      if (length > text.length) {
+        return text;
+      } else {
+        return '${text.substring(0, length)}...';
+      }
+    }
+
     return passwords.isNotEmpty
         ? ListView.builder(
             shrinkWrap: true,
@@ -33,12 +41,12 @@ class PasswordsList extends StatelessWidget {
                   child: ListTile(
                     leading: const Icon(Icons.public),
                     title: Text(
-                      passwords.elementAt(index).website,
+                      trimText(passwords.elementAt(index).website, 30),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: passwords.elementAt(index).username != null
                         ? Text(
-                            passwords.elementAt(index).username!,
+                            trimText(passwords.elementAt(index).username!, 30),
                             style: TextStyle(color: colors.secondaryTextColor),
                           )
                         : null,

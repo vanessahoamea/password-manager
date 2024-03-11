@@ -10,7 +10,8 @@ class ThemeCubit extends Cubit<ThemeMode> {
   }
 
   Future<void> loadThemeFromLocalStorage() async {
-    ThemeMode themeMode = await localStorageService.getThemeMode();
+    await localStorageService.initialize();
+    ThemeMode themeMode = localStorageService.getThemeMode();
     emit(themeMode);
   }
 
