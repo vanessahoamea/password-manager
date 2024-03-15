@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/bloc/auth/auth_state.dart';
+import 'package:password_manager/services/ad/ad_service.dart';
 import 'package:password_manager/services/auth/app_user.dart';
 import 'package:password_manager/services/auth/auth_service.dart';
 import 'package:password_manager/services/biometrics/biometrics_service.dart';
@@ -15,9 +16,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthService authService,
     LocalStorageService localStorageService,
     BiometricsService biometricsService,
+    AdService adService,
   ) : super(const AuthStateUninitialized(isLoading: false)) {
     on<AuthEventInitialize>((event, emit) async {
-      await authService.initialize();
+      await Future.wait([authService.initialize(), adService.initialize()]);
 
       final [
         rememberUser as bool,

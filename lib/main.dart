@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:password_manager/bloc/ad/ad_cubit.dart';
 import 'package:password_manager/bloc/auth/auth_bloc.dart';
 import 'package:password_manager/bloc/auth/auth_event.dart';
 import 'package:password_manager/bloc/auth/auth_state.dart';
@@ -17,6 +19,7 @@ import 'package:password_manager/pages/register.dart';
 import 'package:password_manager/pages/settings.dart';
 import 'package:password_manager/pages/single_password.dart';
 import 'package:password_manager/pages/verify_email.dart';
+import 'package:password_manager/services/ad/ad_service.dart';
 import 'package:password_manager/services/auth/auth_service.dart';
 import 'package:password_manager/services/biometrics/biometrics_service.dart';
 import 'package:password_manager/services/local_storage/local_storage_service.dart';
@@ -49,6 +52,7 @@ class App extends StatelessWidget {
                   AuthService.fromFirebase(),
                   LocalStorageService(),
                   BiometricsService(),
+                  AdService<Ad>.fromAdMob(),
                 ),
               ),
               BlocProvider<ManagerBloc>(
@@ -57,6 +61,9 @@ class App extends StatelessWidget {
                   LocalStorageService(),
                   BiometricsService(),
                 ),
+              ),
+              BlocProvider<AdCubit>(
+                create: (context) => AdCubit(AdService<Ad>.fromAdMob()),
               ),
             ],
             child: const HomePage(),

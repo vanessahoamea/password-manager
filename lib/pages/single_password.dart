@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:password_manager/bloc/ad/ad_cubit.dart';
 import 'package:password_manager/bloc/manager/manager_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
@@ -260,6 +262,18 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
                   ),
               ],
             ),
+          ),
+          bottomNavigationBar: BlocBuilder<AdCubit, Ad?>(
+            builder: (context, ad) {
+              context.read<AdCubit>().showBannerAd();
+              if (ad != null) {
+                return SizedBox(
+                  height: 60,
+                  child: AdWidget(ad: (ad as BannerAd)),
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
         );
       },
