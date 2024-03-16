@@ -100,16 +100,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
 
       try {
+        await authService.register(
+          email: event.email,
+          password: event.password,
+          repeatPassword: event.repeatPassword,
+        );
         await Future.wait([
-          authService.register(
-            email: event.email,
-            password: event.password,
-            repeatPassword: event.repeatPassword,
-          ),
-          authService.sendEmailVerification(),
-          localStorageService.createEncryptionKey(
-            masterPassword: event.password,
-          )
+          authService.createUserSalt(),
+          authService.sendEmailVerification()
         ]);
 
         emit((state as AuthStateRegistering).copyWith(isLoading: false));
@@ -164,6 +162,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             exception: null,
           ));
         } else {
+          final salt = await authService.getUserSalt();
+          await localStorageService.createEncryptionKey(
+            masterPassword: event.password,
+            salt: salt,
+          );
           emit(AuthStateLoggedIn(isLoading: false, user: user));
         }
       } on Exception catch (e) {
@@ -242,7 +245,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       try {
         hasBiometricsEnabled = localStorageService.getHasBiometricsEnabled();
-        await authService.logOut();
+        await Future.wait([
+          authService.logOut(),
+          localStorageService.deleteEncryptionKey(),
+        ]);
 
         switch (state.runtimeType) {
           case AuthStateVerifyEmail:

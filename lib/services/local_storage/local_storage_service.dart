@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:math';
 
-import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:password_manager/services/passwords/password_service.dart';
@@ -54,33 +52,26 @@ class LocalStorageService {
     return credentials;
   }
 
-  Future<List<dynamic>> getEncryptionKey() async {
-    final [encodedIV, encodedKey] = await Future.wait([
-      storage.read(key: 'iv'),
-      storage.read(key: 'encryption_key'),
-    ]);
-    List<int> key = jsonDecode(encodedKey ?? '[]').cast<int>();
-    IV iv = IV.fromBase64(encodedIV ?? '');
+  Future<List<int>> getEncryptionKey() async {
+    final encodedKey = await storage.read(key: 'encryption_key');
+    List<int> keyBytes = jsonDecode(encodedKey ?? '[]').cast<int>();
 
-    return [key, iv];
+    return keyBytes;
   }
 
-  Future<void> createEncryptionKey({required String masterPassword}) async {
-    List<int> salt = [];
-    for (int i = 1; i <= 32; i++) {
-      salt.add(Random().nextInt(256));
-    }
-
-    final [key, iv] = await PasswordService.generateKey(
+  Future<void> createEncryptionKey({
+    required String masterPassword,
+    required List<int> salt,
+  }) async {
+    final keyBytes = await PasswordService.generateKey(
       masterPassword: masterPassword,
       salt: salt,
     );
-    List<int> keyBytes = await key.extractBytes();
+    await storage.write(key: 'encryption_key', value: jsonEncode(keyBytes));
+  }
 
-    await Future.wait([
-      storage.write(key: 'iv', value: iv.base64),
-      storage.write(key: 'encryption_key', value: jsonEncode(keyBytes)),
-    ]);
+  Future<void> deleteEncryptionKey() async {
+    await storage.delete(key: 'encryption_key');
   }
 
   Map<String, dynamic> getPasswordSettings() {

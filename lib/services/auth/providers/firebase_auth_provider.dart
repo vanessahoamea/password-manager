@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
 import 'package:firebase_core/firebase_core.dart';
@@ -127,6 +131,41 @@ class FirebaseAuthProvider extends AuthProvider {
       await user.sendEmailVerification();
     } else {
       throw AuthExceptionUserNotLoggedIn();
+    }
+  }
+
+  @override
+  Future<void> createUserSalt() async {
+    List<int> salt = [];
+    for (int i = 1; i <= 32; i++) {
+      salt.add(Random().nextInt(256));
+    }
+
+    try {
+      FirebaseFirestore.instance
+          .collection('salts')
+          .add({'userId': user.id, 'nonce': jsonEncode(salt)});
+    } on AuthExceptionUserNotLoggedIn catch (_) {
+      rethrow;
+    } on Exception catch (_) {
+      throw AuthExceptionGeneric();
+    }
+  }
+
+  @override
+  Future<List<int>> getUserSalt() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('salts')
+          .where('userId', isEqualTo: user.id)
+          .get();
+      final data = snapshot.docs.first.data();
+
+      return jsonDecode(data['nonce'] ?? '[]').cast<int>();
+    } on AuthExceptionUserNotLoggedIn catch (_) {
+      rethrow;
+    } on Exception catch (_) {
+      throw AuthExceptionGeneric();
     }
   }
 }

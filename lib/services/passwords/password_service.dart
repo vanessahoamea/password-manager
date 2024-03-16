@@ -77,7 +77,7 @@ class PasswordService {
     return result.toString();
   }
 
-  static Future<List<dynamic>> generateKey({
+  static Future<List<int>> generateKey({
     required String masterPassword,
     required List<int> salt,
   }) async {
@@ -90,9 +90,8 @@ class PasswordService {
       password: masterPassword,
       nonce: salt,
     );
-    final iv = IV.fromLength(16);
 
-    return [key, iv];
+    return key.extractBytes();
   }
 
   static Future<String> encrypt({

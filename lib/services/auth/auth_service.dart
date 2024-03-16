@@ -33,6 +33,10 @@ class AuthService {
 
   Future<void> sendEmailVerification() => authProvider.sendEmailVerification();
 
+  Future<void> createUserSalt() => authProvider.createUserSalt();
+
+  Future<List<int>> getUserSalt() => authProvider.getUserSalt();
+
   static bool? validatePasswordLength(String password) {
     if (password.isEmpty) {
       return null;

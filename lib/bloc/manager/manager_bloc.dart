@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:encrypt/encrypt.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
@@ -102,15 +103,14 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
 
     on<ManagerEventGoToSinglePassword>((event, emit) async {
       try {
-        final [encryptionKey, iv] =
-            await localStorageService.getEncryptionKey();
+        final encryptionKey = await localStorageService.getEncryptionKey();
         String decryptedPassword = '';
 
         if (event.password != null) {
           decryptedPassword = await PasswordService.decrypt(
             encryptedPassword: event.password!.encryptedPassword,
             encryptionKey: encryptionKey,
-            iv: iv,
+            iv: IV.fromBase64(event.password!.iv),
           );
         }
 
@@ -212,8 +212,8 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
       ));
 
       try {
-        final [encryptionKey, iv] =
-            await localStorageService.getEncryptionKey();
+        final encryptionKey = await localStorageService.getEncryptionKey();
+        final iv = IV.fromLength(16);
         final encryptedPassword = event.password.isNotEmpty
             ? await PasswordService.encrypt(
                 plaintextPassword: event.password,
@@ -229,6 +229,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
             website: event.website,
             username: event.username,
             encryptedPassword: encryptedPassword,
+            iv: iv.base64,
           );
           await passwordService.createPassword(password: password);
         }
@@ -240,6 +241,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
             website: event.website,
             username: event.username,
             encryptedPassword: encryptedPassword,
+            iv: iv.base64,
           );
           await passwordService.updatePassword(password: password);
         }

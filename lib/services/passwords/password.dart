@@ -6,6 +6,7 @@ class Password {
   final String website;
   final String? username;
   final String encryptedPassword;
+  final String iv;
 
   Password({
     this.id,
@@ -13,6 +14,7 @@ class Password {
     required this.website,
     this.username,
     required this.encryptedPassword,
+    required this.iv,
   });
 
   factory Password.fromFirestore(
@@ -25,6 +27,7 @@ class Password {
       website: data['website'],
       username: data['username'],
       encryptedPassword: data['encryptedPassword'],
+      iv: data['iv'],
     );
   }
 
@@ -33,6 +36,7 @@ class Password {
       'userId': userId,
       'website': website,
       'encryptedPassword': encryptedPassword,
+      'iv': iv,
     };
 
     if (id != null) {
