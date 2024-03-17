@@ -11,26 +11,23 @@ import '../exceptions.dart';
 
 class MockDatabaseProvider implements DatabaseProvider {
   final PasswordsStream _passwords = PasswordsStream();
-  late final AppUser _user = const AppUser(
+  final AppUser _user = const AppUser(
     id: 'dummy',
     email: 'test@email.com',
     isEmailVerified: true,
   );
   late final StreamSubscription _subscription;
   late final List<int> _encryptionKey;
-  late final IV _iv;
   bool _isInitialized = false;
   Iterable<Password>? _currentPasswords;
 
   MockDatabaseProvider();
 
   Future<void> initialize() async {
-    final [key, iv] = await PasswordService.generateKey(
+    _encryptionKey = await PasswordService.generateKey(
       masterPassword: 'Testpassword.123',
-      salt: [1, 2, 3, 4, 5],
+      salt: List.generate(32, (index) => index),
     );
-    _encryptionKey = await key.extractBytes();
-    _iv = iv;
     _subscription =
         _passwords.listen((passwords) => _currentPasswords = passwords);
 
@@ -40,12 +37,14 @@ class MockDatabaseProvider implements DatabaseProvider {
         userId: _user.id,
         website: 'Google',
         encryptedPassword: 'MyGooglePassword.456',
+        iv: IV.fromLength(16).base64,
       ),
       Password(
         id: 'second_dummy',
         userId: _user.id,
         website: 'Facebook',
         encryptedPassword: 'MyFacebookPassword.789',
+        iv: IV.fromLength(16).base64,
       )
     ]);
 
@@ -54,7 +53,6 @@ class MockDatabaseProvider implements DatabaseProvider {
 
   AppUser get user => _user;
   List<int> get encryptionKey => _encryptionKey;
-  IV get iv => _iv;
   bool get isInitialized => _isInitialized;
   Iterable<Password>? get currentPasswords => _currentPasswords;
 
@@ -113,6 +111,7 @@ class MockDatabaseProvider implements DatabaseProvider {
           website: password.website,
           username: password.username,
           encryptedPassword: password.encryptedPassword,
+          iv: IV.fromLength(16).base64,
         );
         _passwords.add(passwordsList);
         return;

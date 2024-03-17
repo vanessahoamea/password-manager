@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:password_manager/services/auth/app_user.dart';
 import 'package:password_manager/services/auth/auth_exceptions.dart';
 import 'package:password_manager/services/auth/auth_service.dart';
@@ -7,6 +9,7 @@ import '../exceptions.dart';
 
 class MockAuthProvider implements AuthProvider {
   AppUser? _user;
+  List<int>? _userSalt;
   bool _isInitialized = false;
 
   MockAuthProvider();
@@ -26,6 +29,8 @@ class MockAuthProvider implements AuthProvider {
       throw AuthExceptionUserNotLoggedIn();
     }
   }
+
+  List<int>? get userSalt => _userSalt;
 
   bool get isInitialized => _isInitialized;
 
@@ -107,5 +112,30 @@ class MockAuthProvider implements AuthProvider {
 
     await Future.delayed(const Duration(seconds: 1));
     _user = AppUser(id: 'dummy', email: _user!.email, isEmailVerified: true);
+  }
+
+  @override
+  Future<void> createUserSalt() async {
+    List<int> salt = [];
+    for (int i = 1; i <= 32; i++) {
+      salt.add(Random().nextInt(256));
+    }
+
+    _userSalt = salt;
+    await Future.delayed(const Duration(seconds: 1));
+  }
+
+  @override
+  Future<List<int>> getUserSalt() async {
+    if (_user == null) {
+      throw AuthExceptionUserNotLoggedIn();
+    }
+
+    if (_userSalt == null) {
+      throw AuthExceptionGeneric();
+    }
+
+    await Future.delayed(const Duration(seconds: 1));
+    return _userSalt!;
   }
 }

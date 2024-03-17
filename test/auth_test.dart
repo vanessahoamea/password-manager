@@ -64,7 +64,9 @@ void main() {
       }
     });
 
-    test('Registration should delegate to login function', () async {
+    test(
+        'Registration should delegate to login function and create a salt for the user',
+        () async {
       expect(
         authProvider.register(
           email: 'bad@address.com',
@@ -88,8 +90,13 @@ void main() {
         password: 'Testpassword.123',
         repeatPassword: 'Testpassword.123',
       );
+      await authProvider.createUserSalt();
+      final fetchedSalt = await authProvider.getUserSalt();
+
       expect(authProvider.user, user);
       expect(user.isEmailVerified, false);
+      expect(authProvider.userSalt, isNotNull);
+      expect(authProvider.userSalt, fetchedSalt);
     });
 
     test('Logged in user should be able to get verified', () async {

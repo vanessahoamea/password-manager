@@ -53,64 +53,71 @@ void main() {
         PasswordService.encrypt(
           plaintextPassword: 'test_password_123',
           encryptionKey: List<int>.filled(16, 0),
-          iv: IV.fromLength(5),
+          iv: IV.fromLength(16),
         );
       } catch (e) {
         expect(e, isA<PasswordExceptionInvalidKey>());
       }
 
       const plaintextPassword = 'test_password_123';
+      final iv = IV.fromLength(16);
       final encryptedPassword = await PasswordService.encrypt(
         plaintextPassword: plaintextPassword,
         encryptionKey: dbProvider.encryptionKey,
-        iv: dbProvider.iv,
+        iv: iv,
       );
       final decryptedPassword = await PasswordService.decrypt(
         encryptedPassword: encryptedPassword,
         encryptionKey: dbProvider.encryptionKey,
-        iv: dbProvider.iv,
+        iv: iv,
       );
 
       expect(decryptedPassword, plaintextPassword);
     });
 
     test('User should be able to add a new password', () async {
+      final iv = IV.fromLength(16);
       final encryptedPassword = await PasswordService.encrypt(
         plaintextPassword: 'test_password_123',
         encryptionKey: dbProvider.encryptionKey,
-        iv: dbProvider.iv,
+        iv: iv,
       );
 
       try {
         await dbProvider.createPassword(
-            password: Password(
-          userId: dbProvider.user.id,
-          website: '',
-          username: 'test_username',
-          encryptedPassword: encryptedPassword,
-        ));
+          password: Password(
+            userId: dbProvider.user.id,
+            website: '',
+            username: 'test_username',
+            encryptedPassword: encryptedPassword,
+            iv: iv.base64,
+          ),
+        );
       } catch (e) {
         expect(e, isA<PasswordExceptionEmptyFields>());
       }
 
       await dbProvider.createPassword(
-          password: Password(
-        id: 'third_dummy',
-        userId: dbProvider.user.id,
-        website: 'Test Website',
-        username: 'test_username',
-        encryptedPassword: encryptedPassword,
-      ));
+        password: Password(
+          id: 'third_dummy',
+          userId: dbProvider.user.id,
+          website: 'Test Website',
+          username: 'test_username',
+          encryptedPassword: encryptedPassword,
+          iv: iv.base64,
+        ),
+      );
 
       expect(dbProvider.currentPasswords!.length, 3);
     });
 
     test('User should be able to edit an existing password', () async {
       const plaintextPassword = r'MyNewGooglePassword!@#$%^';
+      final iv = IV.fromLength(16);
       final encryptedPassword = await PasswordService.encrypt(
         plaintextPassword: plaintextPassword,
         encryptionKey: dbProvider.encryptionKey,
-        iv: dbProvider.iv,
+        iv: iv,
       );
 
       try {
@@ -120,6 +127,7 @@ void main() {
             userId: dbProvider.user.id,
             website: 'Something That Doesn\'t Exist',
             encryptedPassword: encryptedPassword,
+            iv: iv.base64,
           ),
         );
       } catch (e) {
@@ -132,6 +140,7 @@ void main() {
           userId: dbProvider.user.id,
           website: 'Google',
           encryptedPassword: encryptedPassword,
+          iv: iv.base64,
         ),
       );
 
@@ -140,7 +149,7 @@ void main() {
       final decryptedPassword = await PasswordService.decrypt(
         encryptedPassword: updatedPassword.encryptedPassword,
         encryptionKey: dbProvider.encryptionKey,
-        iv: dbProvider.iv,
+        iv: iv,
       );
 
       expect(decryptedPassword, plaintextPassword);
