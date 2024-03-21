@@ -15,6 +15,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
   late Stream<Iterable<Password>> passwords;
   late Map<String, dynamic> passwordSettings;
   late bool supportsBiometrics;
+  late bool areBiometricsSet;
   late bool hasBiometricsEnabled;
   String? searchTerm;
   Iterable<Password>? filteredPasswords;
@@ -33,7 +34,9 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
         supportsBiometrics = await biometricsService.supportsBiometrics();
 
         if (supportsBiometrics) {
-          hasBiometricsEnabled = localStorageService.getHasBiometricsEnabled();
+          areBiometricsSet = await biometricsService.areBiometricsSet();
+          hasBiometricsEnabled =
+              areBiometricsSet && localStorageService.getHasBiometricsEnabled();
         } else {
           hasBiometricsEnabled = false;
         }
@@ -49,6 +52,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
       } on Exception catch (e) {
         passwords = Stream.fromIterable([]);
         supportsBiometrics = false;
+        areBiometricsSet = false;
         hasBiometricsEnabled = false;
 
         emit(ManagerStatePasswordsPage(
@@ -190,7 +194,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
     });
 
     on<ManagerEventToggleBiometrics>((event, emit) async {
-      hasBiometricsEnabled = !hasBiometricsEnabled;
+      hasBiometricsEnabled = !hasBiometricsEnabled && areBiometricsSet;
       await localStorageService.toggleBiometrics(hasBiometricsEnabled);
 
       emit((state as ManagerStateSettingsPage).copyWith(

@@ -10,6 +10,7 @@ import 'package:password_manager/services/local_storage/local_storage_service.da
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   late bool rememberUser;
   late Map<String, String> credentials;
+  late bool areBiometricsSet;
   late bool hasBiometricsEnabled;
 
   AuthBloc(
@@ -24,26 +25,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final [
         rememberUser as bool,
         credentials as Map<String, String>,
+        areBiometricsSet as bool
       ] = await Future.wait([
         localStorageService.getRememberUser(),
-        localStorageService.getCredentials()
+        localStorageService.getCredentials(),
+        biometricsService.areBiometricsSet()
       ]);
       this.rememberUser = rememberUser;
       this.credentials = credentials;
-      hasBiometricsEnabled = localStorageService.getHasBiometricsEnabled();
+      this.areBiometricsSet = areBiometricsSet;
+      hasBiometricsEnabled =
+          areBiometricsSet && localStorageService.getHasBiometricsEnabled();
 
-      try {
-        emit(AuthStateLoggedIn(isLoading: false, user: authService.user));
-      } catch (_) {
-        emit(AuthStateLoggedOut(
-          isLoading: false,
-          rememberUser: rememberUser,
-          showPassword: false,
-          hasBiometricsEnabled: hasBiometricsEnabled,
-          cachedEmail: credentials['email'],
-          exception: null,
-        ));
-      }
+      emit(AuthStateLoggedOut(
+        isLoading: false,
+        rememberUser: rememberUser,
+        showPassword: false,
+        hasBiometricsEnabled: hasBiometricsEnabled,
+        cachedEmail: credentials['email'],
+        exception: null,
+      ));
     });
 
     on<AuthEventGoToRegister>((event, emit) {
@@ -244,7 +245,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       try {
-        hasBiometricsEnabled = localStorageService.getHasBiometricsEnabled();
+        hasBiometricsEnabled =
+            areBiometricsSet && localStorageService.getHasBiometricsEnabled();
         await Future.wait([
           authService.logOut(),
           localStorageService.deleteEncryptionKey(),

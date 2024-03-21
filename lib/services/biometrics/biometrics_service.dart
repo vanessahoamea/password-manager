@@ -22,12 +22,16 @@ class BiometricsService {
     }
   }
 
-  Future<bool> hasBiometricsEnabled() async {
-    final biometrics = await auth.getAvailableBiometrics();
-    return biometrics
-        .where((biometric) => biometric != BiometricType.weak)
-        .toList()
-        .isNotEmpty;
+  Future<bool> areBiometricsSet() async {
+    try {
+      final biometrics = await auth.getAvailableBiometrics();
+      return biometrics
+          .where((biometric) => biometric != BiometricType.weak)
+          .toList()
+          .isNotEmpty;
+    } on MissingPluginException catch (_) {
+      return false;
+    }
   }
 
   Future<void> authenticateWithBiometrics() async {
