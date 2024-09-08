@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_bloc.dart';
 import 'package:password_manager/bloc/manager/manager_event.dart';
 import 'package:password_manager/bloc/manager/manager_state.dart';
+import 'package:password_manager/components/cross_platform_switch.dart';
 import 'package:password_manager/components/password_container.dart';
 import 'package:password_manager/components/password_option.dart';
 import 'package:password_manager/components/primary_button.dart';
@@ -50,7 +51,7 @@ class GeneratorPage extends StatelessWidget {
                   // password container
                   PasswordContainer(password: state.password),
                   const SizedBox(height: 20),
-        
+
                   // copy and generate buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -58,7 +59,8 @@ class GeneratorPage extends StatelessWidget {
                       Expanded(
                         child: PrimaryButton(
                           text: 'Copy',
-                          onTap: () => _copyToClipboard(context, state.password),
+                          onTap: () =>
+                              _copyToClipboard(context, state.password),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -71,7 +73,7 @@ class GeneratorPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-        
+
                   // preferences
                   PasswordOption(
                     title: 'Length',
@@ -94,7 +96,7 @@ class GeneratorPage extends StatelessWidget {
                   PasswordOption(
                     title: 'Lowercase letters (a-z)',
                     widgets: [
-                      Switch(
+                      CrossPlatformSwitch(
                         value: state.includeLowercase,
                         onChanged: (value) =>
                             _generatePassword(context, includeLowercase: value),
@@ -104,7 +106,7 @@ class GeneratorPage extends StatelessWidget {
                   PasswordOption(
                     title: 'Uppercase letters (A-Z)',
                     widgets: [
-                      Switch(
+                      CrossPlatformSwitch(
                         value: state.includeUppercase,
                         onChanged: (value) =>
                             _generatePassword(context, includeUppercase: value),
@@ -114,7 +116,7 @@ class GeneratorPage extends StatelessWidget {
                   PasswordOption(
                     title: 'Numbers (0-9)',
                     widgets: [
-                      Switch(
+                      CrossPlatformSwitch(
                         value: state.includeNumbers,
                         onChanged: (value) =>
                             _generatePassword(context, includeNumbers: value),
@@ -124,7 +126,7 @@ class GeneratorPage extends StatelessWidget {
                   PasswordOption(
                     title: r'Special characters (!@#$%^&*)',
                     widgets: [
-                      Switch(
+                      CrossPlatformSwitch(
                         value: state.includeSpecial,
                         onChanged: (value) =>
                             _generatePassword(context, includeSpecial: value),

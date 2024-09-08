@@ -26,16 +26,16 @@ class AppTheme {
     ),
     sliderTheme: const SliderThemeData(inactiveTrackColor: lightAccentColor),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateColor.resolveWith((_) => Colors.white),
-      trackColor: MaterialStateColor.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      thumbColor: WidgetStateColor.resolveWith((_) => Colors.white),
+      trackColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return primaryColor;
         }
         return lightAccentColor;
       }),
       trackOutlineColor:
-          MaterialStateColor.resolveWith((_) => Colors.transparent),
-      trackOutlineWidth: const MaterialStatePropertyAll(0.0),
+          WidgetStateColor.resolveWith((_) => Colors.transparent),
+      trackOutlineWidth: const WidgetStatePropertyAll(0.0),
     ),
     extensions: const [
       GlobalColors(
@@ -68,20 +68,20 @@ class AppTheme {
     ),
     checkboxTheme: CheckboxThemeData(
       side: const BorderSide(color: darkInputFieldTextColor, width: 2.0),
-      checkColor: MaterialStateColor.resolveWith((_) => Colors.white),
+      checkColor: WidgetStateColor.resolveWith((_) => Colors.white),
     ),
     sliderTheme: const SliderThemeData(inactiveTrackColor: darkAccentColor),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateColor.resolveWith((_) => Colors.white),
-      trackColor: MaterialStateColor.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      thumbColor: WidgetStateColor.resolveWith((_) => Colors.white),
+      trackColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return primaryColor;
         }
         return darkAccentColor;
       }),
       trackOutlineColor:
-          MaterialStateColor.resolveWith((_) => Colors.transparent),
-      trackOutlineWidth: const MaterialStatePropertyAll(0.0),
+          WidgetStateColor.resolveWith((_) => Colors.transparent),
+      trackOutlineWidth: const WidgetStatePropertyAll(0.0),
     ),
     extensions: const [
       GlobalColors(
