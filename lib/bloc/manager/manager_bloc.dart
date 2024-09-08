@@ -100,7 +100,7 @@ class ManagerBloc extends Bloc<ManagerEvent, ManagerState> {
     on<ManagerEventGoToSettingsPage>((event, emit) {
       emit(ManagerStateSettingsPage(
         user: user,
-        supportsBiometrics: supportsBiometrics,
+        areBiometricsSet: areBiometricsSet,
         hasBiometricsEnabled: hasBiometricsEnabled,
       ));
     });

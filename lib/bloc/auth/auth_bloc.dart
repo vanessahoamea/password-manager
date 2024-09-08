@@ -192,6 +192,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           password: credentials['password'] ?? '',
         );
 
+        final salt = await authService.getUserSalt();
+        await localStorageService.createEncryptionKey(
+          masterPassword: credentials['password'] ?? '',
+          salt: salt,
+        );
+
         emit((state as AuthStateLoggedOut).copyWith(isLoading: false));
         emit(AuthStateLoggedIn(isLoading: false, user: user));
       } on Exception catch (e) {
