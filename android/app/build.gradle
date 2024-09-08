@@ -1,5 +1,8 @@
 plugins {
     id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
@@ -21,6 +24,9 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
+
+Project flutter_env_native = project(':flutter_env_native')
+apply from: "${flutter_env_native.projectDir}/envConfig.gradle"
 
 android {
     namespace "com.example.password_manager"
@@ -50,8 +56,10 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
 
-        resValue "string", "ADMOB_APP_ID_ANDROID", ADMOB_APP_ID_ANDROID
+        resValue "string", "ADMOB_APP_ID_ANDROID", ADMOB_APP_ID_ANDROID ?: ''
+        buildConfigField "String", "ADMOB_APP_ID_ANDROID", "\"${ADMOB_APP_ID_ANDROID ?: ''}\""
     }
 
     buildTypes {
@@ -67,4 +75,6 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.0'
+}
