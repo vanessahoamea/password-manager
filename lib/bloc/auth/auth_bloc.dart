@@ -179,18 +179,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthEventAuthenticateWithBiometrics>((event, emit) async {
-      emit((state as AuthStateLoggedOut).copyWith(
-        isLoading: true,
-        loadingMessage: 'Logging you in...',
-        exception: null,
-      ));
-
       try {
         await biometricsService.authenticateWithBiometrics();
         final user = await authService.logIn(
           email: credentials['email'] ?? '',
           password: credentials['password'] ?? '',
         );
+
+        emit((state as AuthStateLoggedOut).copyWith(
+          isLoading: true,
+          loadingMessage: 'Logging you in...',
+          exception: null,
+        ));
 
         final salt = await authService.getUserSalt();
         await localStorageService.createEncryptionKey(
