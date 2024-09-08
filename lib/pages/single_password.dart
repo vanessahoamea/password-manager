@@ -161,106 +161,108 @@ class _SinglePasswordPageState extends State<SinglePasswordPage> {
           ),
           body: Padding(
             padding: const EdgeInsets.all(15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // input fields
-                SecondaryInputField(
-                  controller: _websiteController,
-                  labelText: 'Website',
-                  obscureText: false,
-                  onChanged: (_) => _updateHasUnsavedChanges(),
-                ),
-                const SizedBox(height: 10),
-                SecondaryInputField(
-                  controller: _usernameController,
-                  labelText: 'Username (optional)',
-                  obscureText: false,
-                  onChanged: (_) => _updateHasUnsavedChanges(),
-                ),
-                const SizedBox(height: 10),
-                SecondaryInputField(
-                  controller: _passwordController,
-                  labelText: 'Password',
-                  obscureText: true,
-                  isObscured: !state.showPassword,
-                  toggleVisibility: () {
-                    context
-                        .read<ManagerBloc>()
-                        .add(ManagerEventUpdateSinglePasswordState(
-                          showPassword: !state.showPassword,
-                        ));
-                  },
-                  onChanged: (_) => _updateHasUnsavedChanges(),
-                ),
-                const SizedBox(height: 10),
-
-                // link to generator page
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 5),
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        const TextSpan(
-                          text:
-                              'Make sure to set a strong, hard to guess password. If you need help coming up with a good password, check out our ',
-                        ),
-                        TextSpan(
-                          text: 'password generator',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // input fields
+                  SecondaryInputField(
+                    controller: _websiteController,
+                    labelText: 'Website',
+                    obscureText: false,
+                    onChanged: (_) => _updateHasUnsavedChanges(),
+                  ),
+                  const SizedBox(height: 10),
+                  SecondaryInputField(
+                    controller: _usernameController,
+                    labelText: 'Username (optional)',
+                    obscureText: false,
+                    onChanged: (_) => _updateHasUnsavedChanges(),
+                  ),
+                  const SizedBox(height: 10),
+                  SecondaryInputField(
+                    controller: _passwordController,
+                    labelText: 'Password',
+                    obscureText: true,
+                    isObscured: !state.showPassword,
+                    toggleVisibility: () {
+                      context
+                          .read<ManagerBloc>()
+                          .add(ManagerEventUpdateSinglePasswordState(
+                            showPassword: !state.showPassword,
+                          ));
+                    },
+                    onChanged: (_) => _updateHasUnsavedChanges(),
+                  ),
+                  const SizedBox(height: 10),
+              
+                  // link to generator page
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(
+                            text:
+                                'Make sure to set a strong, hard to guess password. If you need help coming up with a good password, check out our ',
                           ),
-                          recognizer: _linkRecoginzer,
-                        ),
-                        const TextSpan(text: '.'),
-                      ],
-                      style: TextStyle(color: colors.secondaryTextColor),
+                          TextSpan(
+                            text: 'password generator',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            recognizer: _linkRecoginzer,
+                          ),
+                          const TextSpan(text: '.'),
+                        ],
+                        style: TextStyle(color: colors.secondaryTextColor),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 30),
-
-                // save button + delete button (for existing passwords)
-                PrimaryButton(
-                  text: 'Save',
-                  onTap: () {
-                    context.read<ManagerBloc>().add(ManagerEventSavePassword(
-                          id: widget.password?.id,
-                          website: _websiteController.text,
-                          username: _usernameController.text.isNotEmpty
-                              ? _usernameController.text
-                              : null,
-                          password: _passwordController.text,
-                        ));
-                  },
-                ),
-                if (widget.password != null)
-                  Column(
-                    children: [
-                      const SizedBox(height: 5),
-                      SecondaryButton(
-                        text: 'Delete',
-                        onTap: () {
-                          showConfirmationDialog(
-                            context,
-                            'Delete password',
-                            'Are you sure you want to delete your password for ${widget.password!.website}?',
-                          ).then((value) {
-                            if (value) {
-                              context
-                                  .read<ManagerBloc>()
-                                  .add(ManagerEventDeletePassword(
-                                    passwordId: widget.password!.id!,
-                                  ));
-                            }
-                          });
-                        },
-                        color: colors.errorColor,
-                      ),
-                    ],
+                  const SizedBox(height: 30),
+              
+                  // save button + delete button (for existing passwords)
+                  PrimaryButton(
+                    text: 'Save',
+                    onTap: () {
+                      context.read<ManagerBloc>().add(ManagerEventSavePassword(
+                            id: widget.password?.id,
+                            website: _websiteController.text,
+                            username: _usernameController.text.isNotEmpty
+                                ? _usernameController.text
+                                : null,
+                            password: _passwordController.text,
+                          ));
+                    },
                   ),
-              ],
+                  if (widget.password != null)
+                    Column(
+                      children: [
+                        const SizedBox(height: 5),
+                        SecondaryButton(
+                          text: 'Delete',
+                          onTap: () {
+                            showConfirmationDialog(
+                              context,
+                              'Delete password',
+                              'Are you sure you want to delete your password for ${widget.password!.website}?',
+                            ).then((value) {
+                              if (value) {
+                                context
+                                    .read<ManagerBloc>()
+                                    .add(ManagerEventDeletePassword(
+                                      passwordId: widget.password!.id!,
+                                    ));
+                              }
+                            });
+                          },
+                          color: colors.errorColor,
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
           ),
           bottomNavigationBar: BlocBuilder<AdCubit, Ad?>(

@@ -64,36 +64,39 @@ class _PasswordsPageState extends State<PasswordsPage> {
               case ConnectionState.active:
               case ConnectionState.done:
                 if (snapshot.hasData) {
-                  return SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          // search bar
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 15.0),
-                            child: SearchField(
-                              controller: _searchController,
-                              onChanged: (value) {
-                                context
-                                    .read<ManagerBloc>()
-                                    .add(ManagerEventFilterPasswords(
-                                      term: value,
-                                      passwords:
-                                          snapshot.data as Iterable<Password>,
-                                    ));
-                              },
+                  return SizedBox(
+                    height: double.infinity,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            // search bar
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 15.0),
+                              child: SearchField(
+                                controller: _searchController,
+                                onChanged: (value) {
+                                  context
+                                      .read<ManagerBloc>()
+                                      .add(ManagerEventFilterPasswords(
+                                        term: value,
+                                        passwords:
+                                            snapshot.data as Iterable<Password>,
+                                      ));
+                                },
+                              ),
                             ),
-                          ),
-
-                          // passwords list
-                          PasswordsList(
-                            passwords: state.filteredPasswords ??
-                                snapshot.data as Iterable<Password>,
-                          ),
-                        ],
+                    
+                            // passwords list
+                            PasswordsList(
+                              passwords: state.filteredPasswords ??
+                                  snapshot.data as Iterable<Password>,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

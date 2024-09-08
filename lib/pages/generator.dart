@@ -37,101 +37,106 @@ class GeneratorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ManagerBloc, ManagerState>(
-      builder: (context, state) {
-        state as ManagerStateGeneratorPage;
-        return Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            children: [
-              // password container
-              PasswordContainer(password: state.password),
-              const SizedBox(height: 20),
-
-              // copy and generate buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return SizedBox(
+      height: double.infinity,
+      child: SingleChildScrollView(
+        child: BlocBuilder<ManagerBloc, ManagerState>(
+          builder: (context, state) {
+            state as ManagerStateGeneratorPage;
+            return Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
                 children: [
-                  Expanded(
-                    child: PrimaryButton(
-                      text: 'Copy',
-                      onTap: () => _copyToClipboard(context, state.password),
-                    ),
+                  // password container
+                  PasswordContainer(password: state.password),
+                  const SizedBox(height: 20),
+        
+                  // copy and generate buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: PrimaryButton(
+                          text: 'Copy',
+                          onTap: () => _copyToClipboard(context, state.password),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: PrimaryButton(
+                          text: 'Generate',
+                          onTap: () => _generatePassword(context),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: PrimaryButton(
-                      text: 'Generate',
-                      onTap: () => _generatePassword(context),
-                    ),
+                  const SizedBox(height: 20),
+        
+                  // preferences
+                  PasswordOption(
+                    title: 'Length',
+                    widgets: [
+                      Expanded(
+                        child: Slider(
+                          min: 8,
+                          max: 64,
+                          value: state.length.toDouble(),
+                          onChanged: (value) =>
+                              _generatePassword(context, length: value.toInt()),
+                        ),
+                      ),
+                      Text(
+                        '${state.length}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  PasswordOption(
+                    title: 'Lowercase letters (a-z)',
+                    widgets: [
+                      Switch(
+                        value: state.includeLowercase,
+                        onChanged: (value) =>
+                            _generatePassword(context, includeLowercase: value),
+                      ),
+                    ],
+                  ),
+                  PasswordOption(
+                    title: 'Uppercase letters (A-Z)',
+                    widgets: [
+                      Switch(
+                        value: state.includeUppercase,
+                        onChanged: (value) =>
+                            _generatePassword(context, includeUppercase: value),
+                      ),
+                    ],
+                  ),
+                  PasswordOption(
+                    title: 'Numbers (0-9)',
+                    widgets: [
+                      Switch(
+                        value: state.includeNumbers,
+                        onChanged: (value) =>
+                            _generatePassword(context, includeNumbers: value),
+                      ),
+                    ],
+                  ),
+                  PasswordOption(
+                    title: r'Special characters (!@#$%^&*)',
+                    widgets: [
+                      Switch(
+                        value: state.includeSpecial,
+                        onChanged: (value) =>
+                            _generatePassword(context, includeSpecial: value),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-
-              // preferences
-              PasswordOption(
-                title: 'Length',
-                widgets: [
-                  Expanded(
-                    child: Slider(
-                      min: 8,
-                      max: 64,
-                      value: state.length.toDouble(),
-                      onChanged: (value) =>
-                          _generatePassword(context, length: value.toInt()),
-                    ),
-                  ),
-                  Text(
-                    '${state.length}',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ],
-              ),
-              PasswordOption(
-                title: 'Lowercase letters (a-z)',
-                widgets: [
-                  Switch(
-                    value: state.includeLowercase,
-                    onChanged: (value) =>
-                        _generatePassword(context, includeLowercase: value),
-                  ),
-                ],
-              ),
-              PasswordOption(
-                title: 'Uppercase letters (A-Z)',
-                widgets: [
-                  Switch(
-                    value: state.includeUppercase,
-                    onChanged: (value) =>
-                        _generatePassword(context, includeUppercase: value),
-                  ),
-                ],
-              ),
-              PasswordOption(
-                title: 'Numbers (0-9)',
-                widgets: [
-                  Switch(
-                    value: state.includeNumbers,
-                    onChanged: (value) =>
-                        _generatePassword(context, includeNumbers: value),
-                  ),
-                ],
-              ),
-              PasswordOption(
-                title: r'Special characters (!@#$%^&*)',
-                widgets: [
-                  Switch(
-                    value: state.includeSpecial,
-                    onChanged: (value) =>
-                        _generatePassword(context, includeSpecial: value),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 }
