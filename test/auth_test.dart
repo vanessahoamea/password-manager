@@ -109,6 +109,19 @@ void main() {
       }
     });
 
+    test(
+        'Users should not be able to request the verification email to be sent unless 30 seconds have passed since the last one was sent',
+        () async {
+      try {
+        authProvider.user;
+        await authProvider.sendEmailVerification();
+        await Future.delayed(const Duration(seconds: 1));
+        await authProvider.sendEmailVerification();
+      } catch (e) {
+        expect(e, isA<AuthExceptionEmailLimitExceeded>());
+      }
+    });
+
     test('User should be able to log out then log in again', () async {
       await authProvider.logOut();
       final user = await authProvider.logIn(

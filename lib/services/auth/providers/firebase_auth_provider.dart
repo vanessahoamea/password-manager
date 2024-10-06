@@ -14,6 +14,7 @@ import 'package:password_manager/services/auth/app_user.dart';
 class FirebaseAuthProvider extends AuthProvider {
   static final FirebaseAuthProvider _instance =
       FirebaseAuthProvider._internal();
+  static int emailSentTimestamp = 0;
 
   factory FirebaseAuthProvider() {
     return _instance;
@@ -126,9 +127,15 @@ class FirebaseAuthProvider extends AuthProvider {
 
   @override
   Future<void> sendEmailVerification() async {
+    int currentTimestamp = DateTime.now().millisecondsSinceEpoch;
+    if (currentTimestamp - emailSentTimestamp <= 1000 * 60) {
+      throw AuthExceptionEmailLimitExceeded();
+    }
+
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       await user.sendEmailVerification();
+      emailSentTimestamp = currentTimestamp;
     } else {
       throw AuthExceptionUserNotLoggedIn();
     }

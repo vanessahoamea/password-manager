@@ -11,6 +11,7 @@ class MockAuthProvider implements AuthProvider {
   AppUser? _user;
   List<int>? _userSalt;
   bool _isInitialized = false;
+  int _emailSentTimestamp = 0;
 
   MockAuthProvider();
 
@@ -110,8 +111,14 @@ class MockAuthProvider implements AuthProvider {
       throw AuthExceptionUserNotLoggedIn();
     }
 
+    int currentTimestamp = DateTime.now().millisecondsSinceEpoch;
+    if (currentTimestamp - _emailSentTimestamp <= 1000 * 60) {
+      throw AuthExceptionEmailLimitExceeded();
+    }
+
     await Future.delayed(const Duration(seconds: 1));
     _user = AppUser(id: 'dummy', email: _user!.email, isEmailVerified: true);
+    _emailSentTimestamp = currentTimestamp;
   }
 
   @override
