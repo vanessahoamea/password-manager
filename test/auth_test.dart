@@ -101,8 +101,7 @@ void main() {
 
     test('Logged in user should be able to get verified', () async {
       try {
-        authProvider.user;
-        await authProvider.sendEmailVerification();
+        await authProvider.sendEmailVerification(updateTimestamp: false);
         expect(authProvider.user.isEmailVerified, true);
       } catch (e) {
         expect(e, isA<AuthExceptionUserNotLoggedIn>());
@@ -110,17 +109,21 @@ void main() {
     });
 
     test(
-        'Users should not be able to request the verification email to be sent unless 30 seconds have passed since the last one was sent',
+        'Users should not be able to request the verification email to be sent unless 60 seconds have passed since the last one was sent',
         () async {
-      try {
-        authProvider.user;
-        await authProvider.sendEmailVerification();
-        await Future.delayed(const Duration(seconds: 1));
-        await authProvider.sendEmailVerification();
-      } catch (e) {
-        expect(e, isA<AuthExceptionEmailLimitExceeded>());
-      }
-    });
+      // first attempt after registration, will work
+      await authProvider.sendEmailVerification();
+      await Future.delayed(const Duration(seconds: 1));
+
+      // second attempt after less than 60 seconds since the previous one, will fail
+      await expectLater(
+        authProvider.sendEmailVerification(),
+        throwsA(const TypeMatcher<AuthExceptionEmailLimitExceeded>()),
+      );
+
+      await Future.delayed(const Duration(seconds: 61));
+      await authProvider.sendEmailVerification();
+    }, timeout: const Timeout(Duration(seconds: 100)));
 
     test('User should be able to log out then log in again', () async {
       await authProvider.logOut();

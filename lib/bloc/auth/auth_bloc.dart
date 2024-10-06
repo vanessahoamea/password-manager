@@ -108,7 +108,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
         await Future.wait([
           authService.createUserSalt(),
-          authService.sendEmailVerification()
+          authService.sendEmailVerification(updateTimestamp: false)
         ]);
 
         emit((state as AuthStateRegistering).copyWith(isLoading: false));

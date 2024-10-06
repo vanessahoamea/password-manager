@@ -102,7 +102,7 @@ class MockAuthProvider implements AuthProvider {
   }
 
   @override
-  Future<void> sendEmailVerification() async {
+  Future<void> sendEmailVerification({bool updateTimestamp = true}) async {
     if (!isInitialized) {
       throw AuthExceptionNotInitialized();
     }
@@ -118,7 +118,8 @@ class MockAuthProvider implements AuthProvider {
 
     await Future.delayed(const Duration(seconds: 1));
     _user = AppUser(id: 'dummy', email: _user!.email, isEmailVerified: true);
-    _emailSentTimestamp = currentTimestamp;
+    _emailSentTimestamp =
+        updateTimestamp ? currentTimestamp : _emailSentTimestamp;
   }
 
   @override

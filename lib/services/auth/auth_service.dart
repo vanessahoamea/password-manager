@@ -31,7 +31,8 @@ class AuthService {
 
   Future<void> logOut() => authProvider.logOut();
 
-  Future<void> sendEmailVerification() => authProvider.sendEmailVerification();
+  Future<void> sendEmailVerification({bool updateTimestamp = true}) =>
+      authProvider.sendEmailVerification(updateTimestamp: updateTimestamp);
 
   Future<void> createUserSalt() => authProvider.createUserSalt();
 

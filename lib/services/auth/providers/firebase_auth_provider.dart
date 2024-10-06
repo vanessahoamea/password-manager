@@ -126,7 +126,7 @@ class FirebaseAuthProvider extends AuthProvider {
   }
 
   @override
-  Future<void> sendEmailVerification() async {
+  Future<void> sendEmailVerification({bool updateTimestamp = true}) async {
     int currentTimestamp = DateTime.now().millisecondsSinceEpoch;
     if (currentTimestamp - emailSentTimestamp <= 1000 * 60) {
       throw AuthExceptionEmailLimitExceeded();
@@ -135,7 +135,8 @@ class FirebaseAuthProvider extends AuthProvider {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       await user.sendEmailVerification();
-      emailSentTimestamp = currentTimestamp;
+      emailSentTimestamp =
+          updateTimestamp ? currentTimestamp : emailSentTimestamp;
     } else {
       throw AuthExceptionUserNotLoggedIn();
     }

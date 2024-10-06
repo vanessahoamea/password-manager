@@ -10,7 +10,7 @@ abstract class AuthProvider {
   });
   Future<AppUser> logIn({required String email, required String password});
   Future<void> logOut();
-  Future<void> sendEmailVerification();
+  Future<void> sendEmailVerification({bool updateTimestamp});
   Future<void> createUserSalt();
   Future<List<int>> getUserSalt();
 }
