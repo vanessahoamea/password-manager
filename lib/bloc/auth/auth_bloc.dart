@@ -192,14 +192,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           exception: null,
         ));
 
-        final salt = await authService.getUserSalt();
-        await localStorageService.createEncryptionKey(
-          masterPassword: credentials['password'] ?? '',
-          salt: salt,
-        );
-
-        emit((state as AuthStateLoggedOut).copyWith(isLoading: false));
-        emit(AuthStateLoggedIn(isLoading: false, user: user));
+        if (!user.isEmailVerified) {
+          emit(const AuthStateVerifyEmail(
+            isLoading: false,
+            sentEmail: false,
+            exception: null,
+          ));
+        } else {
+          final salt = await authService.getUserSalt();
+          await localStorageService.createEncryptionKey(
+            masterPassword: credentials['password'] ?? '',
+            salt: salt,
+          );
+          emit(AuthStateLoggedIn(isLoading: false, user: user));
+        }
       } on Exception catch (e) {
         emit((state as AuthStateLoggedOut).copyWith(
           isLoading: false,
