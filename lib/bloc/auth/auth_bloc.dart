@@ -97,7 +97,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit((state as AuthStateRegistering).copyWith(
         isLoading: true,
         loadingMessage: 'Creating your account...',
-        exception: null,
       ));
 
       try {
@@ -136,7 +135,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit((state as AuthStateLoggedOut).copyWith(
         isLoading: true,
         loadingMessage: 'Logging you in...',
-        exception: null,
       ));
 
       try {
@@ -189,7 +187,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit((state as AuthStateLoggedOut).copyWith(
           isLoading: true,
           loadingMessage: 'Logging you in...',
-          exception: null,
         ));
 
         if (!user.isEmailVerified) {

@@ -137,7 +137,7 @@ class AuthStateVerifyEmail extends AuthState {
       isLoading: isLoading ?? this.isLoading,
       loadingMessage: loadingMessage ?? this.loadingMessage,
       sentEmail: sentEmail ?? this.sentEmail,
-      exception: exception ?? this.exception,
+      exception: exception,
     );
   }
 }

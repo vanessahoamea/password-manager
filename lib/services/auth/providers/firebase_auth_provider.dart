@@ -134,9 +134,18 @@ class FirebaseAuthProvider extends AuthProvider {
 
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await user.sendEmailVerification();
-      emailSentTimestamp =
-          updateTimestamp ? currentTimestamp : emailSentTimestamp;
+      try {
+        await user.sendEmailVerification();
+        emailSentTimestamp =
+            updateTimestamp ? currentTimestamp : emailSentTimestamp;
+      } on FirebaseAuthException catch (e) {
+        switch (e.code) {
+          case 'too-many-requests':
+            throw AuthExceptionEmailLimitExceeded();
+          default:
+            throw AuthExceptionGeneric();
+        }
+      }
     } else {
       throw AuthExceptionUserNotLoggedIn();
     }
